@@ -1,0 +1,3425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <style></style>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css folder/home.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="fotot/">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+      /* Swiper container spacing */
+      .swiper { width: 100%; padding-top: 18px; padding-bottom: 18px; overflow: hidden; }
+
+      /* Each slide centers its card; Swiper controls visible slides via slidesPerView */
+      .swiper-slide { display: flex; justify-content: center; align-items: flex-start; }
+
+      /* Make the card fill the slide width; restrict max so posters don't grow excessively */
+      .swiper-slide .card {
+        width: 100%;
+        max-width: 320px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 12px;
+      }
+
+      /* Poster image: consistent aspect ratio (2:3) and cover */
+      .swiper-slide .card .card-img-top {
+        width: 100%;
+        aspect-ratio: 2 / 3;
+        object-fit: cover;
+        display: block;
+      }
+
+      .poster-row-wrapper { overflow: visible; }
+
+      /* Navigation arrows (per-row) */
+      .swiper-button-prev, .swiper-button-next {
+        width: 44px; height: 64px; background: rgba(0,0,0,0.45); color: #fff;
+        display: flex; align-items: center; justify-content: center; border-radius: 6px;
+        position: absolute; top: 50%; transform: translateY(-50%); z-index: 20; cursor: pointer;
+      }
+      .swiper-button-prev { left: 8px; }
+      .swiper-button-next { right: 8px; }
+      .swiper-button-prev::after, .swiper-button-next::after { font-size: 20px; }
+
+      /* Responsive: fewer posters on small screens */
+      @media (max-width: 1200px) {
+        .swiper-slide .card { max-width: 280px; }
+      }
+      @media (max-width: 768px) {
+        .swiper-slide .card { max-width: 220px; }
+      }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand wmdb-logo" href="home.html">WMDb</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbarCollapse" aria-controls="mainNavbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center" style="gap:12px;">
+        <li class="nav-item">
+          <a class="btn nav-btn nav-link px-4 py-2" aria-current="page" href="home.html" data-i18n="nav.home">Home</a>
+        </li>
+      </ul>
+
+      <form class="d-flex mx-lg-4 my-2 my-lg-0" id="navbarSearchForm" autocomplete="off" style="max-width:600px; width:100%;">
+        <div class="input-group w-100">
+          <button class="btn btn-light dropdown-toggle searchbar-category" type="button" id="searchCategoryDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-i18n="search.all">
+            All
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="searchCategoryDropdown">
+            <li><a class="dropdown-item" href="#" data-value="All">All</a></li>
+            <li><a class="dropdown-item" href="#" data-value="movie">Movies</a></li>
+            <li><a class="dropdown-item" href="#" data-value="tvshow">Tv Shows</a></li>
+            <li><a class="dropdown-item" href="#" data-value="anime">Anime</a></li>
+          </ul>
+          <input class="form-control searchbar-input" type="search" placeholder="Search" aria-label="Search" id="navbarSearchInput" data-i18n-placeholder="search.placeholder">
+          <button class="btn btn-light searchbar-btn" type="submit" data-i18n="search.button">Search</button>
+        </div>
+      </form>
+
+      <div class="d-flex align-items-center ms-2" style="gap:10px;">
+        <div class="dropdown" id="langDropdownContainer">
+          <button class="btn nav-btn dropdown-toggle px-3 py-2" type="button" id="langDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">EN</button>
+          <div class="dropdown-menu dropdown-menu-dark" id="langDropdownMenu" style="min-width:260px;">
+            <div class="px-3 pt-2 pb-1 text-uppercase" style="font-size: 0.85rem; color: #bbb; font-weight: bold;">Fully Supported</div>
+            <button class="dropdown-item d-flex align-items-center" type="button" data-lang="en" style="font-weight: bold;">
+              <span style="color: #f5c518; font-size: 1.2em; margin-right: 8px;">&#9679;</span>
+              English (United States)
+            </button>
+            <!-- populate script removed from here (moved to end of file) -->
+            <div class="px-3 pt-2 pb-1 text-uppercase" style="font-size: 0.85rem; color: #bbb; font-weight: bold; border-top: 1px solid #333;">Partially Supported
+              <span title="Some features may not be available" style="margin-left: 5px; cursor: pointer;">&#x3f;</span>
+            </div>
+            <button class="dropdown-item" type="button" data-lang="fr-CA">Français (Canada)</button>
+            <button class="dropdown-item" type="button" data-lang="fr-FR">Français (France)</button>
+            <button class="dropdown-item" type="button" data-lang="de">Deutsch (Deutschland)</button>
+            <button class="dropdown-item" type="button" data-lang="hi">हिंदी (भारत)</button>
+            <button class="dropdown-item" type="button" data-lang="it">Italiano (Italia)</button>
+            <button class="dropdown-item" type="button" data-lang="pt-BR">Português (Brasil)</button>
+            <button class="dropdown-item" type="button" data-lang="es-ES">Español (España)</button>
+            <button class="dropdown-item" type="button" data-lang="es-MX">Español (México)</button>
+          </div>
+        </div>
+        <a class="btn nav-btn nav-link ms-2 px-3 py-2" href="signup.html" data-i18n="signup">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Movie Card Section -->
+<div class="d-flex align-items-center px-4 pt-4 pb-2">
+  <h3 class="mb-0" style="font-weight: bold;" data-i18n="movies">Movies</h3>
+  <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+</div>
+<div class="poster-row d-flex flex-row align-items-start ps-4 pb-4" style="overflow-x: auto; gap: 1rem;">
+  <div class="card bg-dark text-white" data-category="movie" data-title="The Batman" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/batman poster.png" class="card-img-top" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Batman</h5>
+    </div>
+    </div>
+    <div class="card bg-dark text-white" data-category="movie" data-title="Superman" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/superman.jpg" class="card-img-top" alt="Superman" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Superman</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/fantasticfour.jpg" class="card-img-top" alt="The Fantastic Four" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Fantastic Four: First Steps</h5>
+    </div>
+    </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Fight Club" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/fightclub.jpg" class="card-img-top" alt="Fight Club" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Fight Club</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="The Amazing Spider-Man" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/tasm.jpg" class="card-img-top" alt="The Amazing Spider-Man" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Amazing Spider-Man</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="The Amazing Spider-Man 2" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/tasm2.jpg" class="card-img-top" alt="The Amazing Spider-Man 2" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Amazing Spider-Man 2</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Shutter Island" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/shutterisland.jpg" class="card-img-top" alt="Shutter Island" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Shutter Island</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Logan" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/logan.jpg" class="card-img-top" alt="Logan" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Logan</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="The Prestige" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/theprestige.jpg" class="card-img-top" alt="The Prestige" style="border-radius: 0; width: 100%;">
+      <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Prestige</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Se7en" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/se7en.jpg" class="card-img-top" alt="Se7en" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Se7en</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="2001: A Space Odyssey" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/spaceoddyssey.jpg" class="card-img-top" alt="2001: A Space Odyssey" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >2001: A Space Odyssey</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Tenet" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/tenet.jpg" class="card-img-top" alt="Tenet" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Tenet</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Taxi Driver" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/taxidriver.jpg" class="card-img-top" alt="Taxi Driver" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Taxi Driver</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Star Wars: The Phantom Menace" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/phantom menace.jpg" class="card-img-top" alt="Star Wars: The Phantom Menace" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Star Wars: The Phantom Menace</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Star Wars: Attack of the Clones" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/attack of the clones.jpg" class="card-img-top" alt="Star Wars: Attack of the Clones" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Star Wars: Attack of the Clones</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Star Wars: Revenge of the Sith" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/rots.jpg" class="card-img-top" alt="Star Wars: Revenge of the Sith" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Star Wars: Revenge of the Sith</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Star Wars: A New Hope" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/anewhope.jpg" class="card-img-top" alt="Star Wars: A New Hope" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Star Wars: A New Hope</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie"  data-title="Star Wars: The Empire Strikes Back" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/theempirestrikesback.jpg" class="card-img-top" alt="Star Wars: The Empire Strikes Back" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Star Wars: The Empire Strikes Back</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Star Wars: Return of the Jedi" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/returnofthejedi.jpg" class="card-img-top" alt="Star Wars: Return of the Jedi" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Star Wars: Return of the Jedi</h5>
+    </div>
+  </div>
+   <div class="card bg-dark text-white" data-category="movie" data-title="Batman Begins" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/batmanbegins.jpg" class="card-img-top" alt="Batman Begins" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Batman Begins</h5>
+    </div>
+  </div>
+   <div class="card bg-dark text-white" data-category="movie" data-title="The Dark Knight" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/thedarkknight.jpg" class="card-img-top" alt="The Dark Knight" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Dark Knight</h5>
+    </div>
+    </div>
+   <div class="card bg-dark text-white" data-category="movie" data-title="The Dark Knight Rises" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/thedarkknightrises.jpg" class="card-img-top" alt="The Dark Knight Rises" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Dark Knight Rises</h5>
+    </div>
+    </div>
+   <div class="card bg-dark text-white" data-category="movie" data-title="Donnie Darko" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/donniedarko.jpg" class="card-img-top" alt="Donnie Darko" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Donnie Darko</h5>
+    </div>
+    </div>
+   <div class="card bg-dark text-white" data-category="movie" data-title="No Country for Old Men" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/nocountryforoldmen.jpg" class="card-img-top" alt="No Country for Old Men" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >No Country for Old Men</h5>
+    </div>
+    
+  </div>
+  <div class="card bg-dark text-white" data-category="movie" data-title="Interstellar" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/interstellar.jpg" class="card-img-top" alt="Interstellar" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Interstellar</h5>
+    </div>
+</div>
+<div class="card bg-dark text-white" data-category="movie" data-title="Pulp Fiction" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/pulpfiction.jpg" class="card-img-top" alt="Pulp Fiction" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Pulp Fiction</h5>
+    </div>
+</div>
+<div class="card bg-dark text-white" data-category="movie" data-title="The Wolf of Wall Street" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/thewolfofwallstreet.jpg" class="card-img-top" alt="The Wolf of Wall Street" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >The Wolf of Wall Street</h5>
+    </div>
+</div>
+<div class="card bg-dark text-white" data-category="movie" data-title="21" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/21movie.jpg" class="card-img-top" alt="21" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >21</h5>
+    </div>
+</div>
+<div class="card bg-dark text-white" data-category="movie" data-title="Gladiator" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/gladiator.jpg" class="card-img-top" alt="Gladiator" style="border-radius: 0; width: 100%;">
+      <button 
+        class="save-btn"
+        onclick="alert('Movie Saved!')">
+        +
+      </button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Gladiator</h5>
+    </div>
+</div>
+</div>
+<!-- End of Movies row -->
+
+<!-- TV Shows Section -->
+<div class="d-flex align-items-center px-4 pt-4 pb-2">
+  <h3 class="mb-0" style="font-weight: bold;">TV Shows</h3>
+  <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+</div>
+<div class="poster-row d-flex flex-row align-items-start ps-4 pb-4" style="overflow-x: auto; gap: 1rem;">
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Breaking Bad" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/breakingbad.jpg" class="card-img-top" alt="Breaking Bad" style="border-radius: 0; width: 100%;">
+  <button class="save-btn">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Breaking Bad</h5>
+    </div>
+  </div>
+   <div class="card bg-dark text-white" data-category="tvshow" data-title="You" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/you.jpg" class="card-img-top" alt="You" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >You</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Dexter" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dexter.jpg" class="card-img-top" alt="Dexter" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0" >Dexter</h5>
+    </div>
+  </div>
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Dexter: Resurrection" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dexterres.jpg" class="card-img-top" alt="Dexter: Resurrection" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dexter: Resurrection</h5>
+    </div>
+  </div>
+
+  <!-- Dexter: Original Sin -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Dexter: Original Sin" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dexteros.jpg" class="card-img-top" alt="Dexter: Original Sin" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dexter: Original Sin</h5>
+    </div>
+  </div>
+
+  <!-- Dexter: New Blood -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Dexter: New Blood" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dexternewblood.jpg" class="card-img-top" alt="Dexter: New Blood" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dexter: New Blood</h5>
+    </div>
+  </div>
+
+  <!-- True Detective -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="True Detective" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/truedetective.jpg" class="card-img-top" alt="True Detective" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">True Detective</h5>
+    </div>
+  </div>
+
+  <!-- Dark -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Dark" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dark.jpg" class="card-img-top" alt="Dark" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dark</h5>
+    </div>
+  </div>
+
+  <!-- Sandman -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Sandman" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/sandman.jpg" class="card-img-top" alt="Sandman" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Sandman</h5>
+    </div>
+  </div>
+
+  <!-- The Rookie -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Rookie" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/therookie.jpg" class="card-img-top" alt="The Rookie" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Rookie</h5>
+    </div>
+  </div>
+
+  <!-- The Witcher -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Witcher" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/thewitcher.jpg" class="card-img-top" alt="The Witcher" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Witcher</h5>
+    </div>
+  </div>
+
+  <!-- The Last of Us -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Last of Us" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/tlou.jpg" class="card-img-top" alt="The Last of Us" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Last of Us</h5>
+    </div>
+  </div>
+
+  <!-- Rick and Morty -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Rick and Morty" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/rick and morty.jpg" class="card-img-top" alt="Rick and Morty" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Rick and Morty</h5>
+    </div>
+  </div>
+
+  <!-- Peacemaker -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Peacemaker" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/peacemaker.jpg" class="card-img-top" alt="Peacemaker" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Peacemaker</h5>
+    </div>
+  </div>
+
+  <!-- Game of Thrones -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Game of Thrones" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/game of thrones.jpg" class="card-img-top" alt="Game of Thrones" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Game of Thrones</h5>
+    </div>
+  </div>
+
+  <!-- Hannibal -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Hannibal" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/hannibal.jpg" class="card-img-top" alt="Hannibal" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Hannibal</h5>
+    </div>
+  </div>
+
+  <!-- Stranger Things -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Stranger Things" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/stranger things.jpg" class="card-img-top" alt="Stranger Things" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Stranger Things</h5>
+    </div>
+  </div>
+
+  <!-- The Sopranos -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Sopranos" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/thesopranos.jpg" class="card-img-top" alt="The Sopranos" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Sopranos</h5>
+    </div>
+  </div>
+
+  <!-- Fallout -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Fallout" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/fallout.jpg" class="card-img-top" alt="Fallout" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Fallout</h5>
+    </div>
+  </div>
+
+  <!-- Better Call Saul -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Better Call Saul" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/bcs.jpg" class="card-img-top" alt="Better Call Saul" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Better Call Saul</h5>
+    </div>
+  </div>
+
+  <!-- Supernatural -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Supernatural" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/supernatural.jpg" class="card-img-top" alt="Supernatural" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Supernatural</h5>
+    </div>
+  </div>
+
+  <!-- The Boys -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Boys" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/the boys.jpg" class="card-img-top" alt="The Boys" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Boys</h5>
+    </div>
+  </div>
+
+  <!-- The Walking Dead -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Walking Dead" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/thewalkingdead.jpg" class="card-img-top" alt="The Walking Dead" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Walking Dead</h5>
+    </div>
+  </div>
+
+  <!-- Invincible -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="Invincible" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/invincible.jpg" class="card-img-top" alt="Invincible" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Invincible</h5>
+    </div>
+  </div>
+
+  <!-- House MD -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="House MD" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/housemd.jpg" class="card-img-top" alt="House MD" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">House MD</h5>
+    </div>
+  </div>
+
+  <!-- The Office -->
+  <div class="card bg-dark text-white" data-category="tvshow" data-title="The Office" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/theoffice.jpg" class="card-img-top" alt="The Office" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Office</h5>
+    </div>
+  </div>
+  <!-- Ozark -->
+<div class="card bg-dark text-white" data-category="tvshow" data-title="Ozark" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+  <div style="position: relative;">
+    <img src="fotot/ozark.jpg" class="card-img-top" alt="Ozark" style="border-radius: 0; width: 100%;">
+    <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+  </div>
+  <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+    <h5 class="card-title mb-0">Ozark</h5>
+  </div>
+</div>
+
+<!-- The Good Doctor -->
+<div class="card bg-dark text-white" data-category="tvshow" data-title="The Good Doctor" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+  <div style="position: relative;">
+    <img src="fotot/IAMASURGEON.jpg" class="card-img-top" alt="The Good Doctor" style="border-radius: 0; width: 100%;">
+    <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+  </div>
+  <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+    <h5 class="card-title mb-0">The Good Doctor</h5>
+  </div>
+</div>
+
+<!-- BoJack Horseman -->
+<div class="card bg-dark text-white" data-category="tvshow" data-title="BoJack Horseman" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+  <div style="position: relative;">
+    <img src="fotot/bojackhorseman.jpg" class="card-img-top" alt="BoJack Horseman" style="border-radius: 0; width: 100%;">
+    <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+  </div>
+  <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+    <h5 class="card-title mb-0">BoJack Horseman</h5>
+  </div>
+</div>
+
+<!-- South Park -->
+<div class="card bg-dark text-white" data-category="tvshow" data-title="South Park" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+  <div style="position: relative;">
+    <img src="fotot/southpark.jpg" class="card-img-top" alt="South Park" style="border-radius: 0; width: 100%;">
+    <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+  </div>
+  <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+    <h5 class="card-title mb-0">South Park</h5>
+  </div>
+</div>
+
+<!-- Brooklyn Nine-Nine -->
+<div class="card bg-dark text-white" data-category="tvshow" data-title="Brooklyn Nine-Nine" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+  <div style="position: relative;">
+    <img src="fotot/brooklyn99.jpg" class="card-img-top" alt="Brooklyn Nine-Nine" style="border-radius: 0; width: 100%;">
+    <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+  </div>
+  <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+    <h5 class="card-title mb-0">Brooklyn Nine-Nine</h5>
+  </div>
+</div>
+</div>
+
+<div id="overlaySearch" class="overlay-search d-none">
+  <form class="searchbar searchbar-overlay" id="overlaySearchForm">
+    <input class="form-control" type="search" placeholder="Search" aria-label="Search" id="overlaySearchInput">
+    <button class="btn btn-outline-light" type="submit">Search</button>
+    <button type="button" class="btn btn-secondary ms-2" id="closeOverlayBtn">Close</button>
+  </form>
+</div>
+<!-- Anime Section -->
+<div class="d-flex align-items-center px-4 pt-4 pb-2">
+  <h3 class="mb-0" style="font-weight: bold;">Anime</h3>
+  <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+</div>
+<!-- =================== TEMPLATE 1: POSTER CARDS =================== -->
+<div class="poster-row d-flex flex-row align-items-start ps-4 pb-4" style="overflow-x: auto; gap: 1rem;">
+
+  <!-- JoJo's Bizarre Adventure -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="JoJo's Bizarre Adventure" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/jjba.jpg" class="card-img-top" alt="JoJo's Bizarre Adventure" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">JoJo's Bizarre Adventure</h5>
+    </div>
+  </div>
+
+  <!-- Evangelion -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Neon Genesis Evangelion" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/evangelion.jpg" class="card-img-top" alt="Neon Genesis Evangelion" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Neon Genesis Evangelion</h5>
+    </div>
+  </div>
+
+  <!-- Dororo -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Dororo" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dororo.jpg" class="card-img-top" alt="Dororo" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dororo</h5>
+    </div>
+  </div>
+
+  <!-- Dragon Ball Z -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Dragon Ball Z" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dbz.jpg" class="card-img-top" alt="Dragon Ball Z" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dragon Ball Z</h5>
+    </div>
+  </div>
+
+  <!-- Dragon Ball Super -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Dragon Ball Super" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dbsuper.jpg" class="card-img-top" alt="Dragon Ball Super" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dragon Ball Super</h5>
+    </div>
+  </div>
+
+  <!-- Dragon Ball Daima -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Dragon Ball Daima" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/dbdaima.jpg" class="card-img-top" alt="Dragon Ball Daima" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Dragon Ball Daima</h5>
+    </div>
+  </div>
+
+  <!-- Seven Deadly Sins -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="The Seven Deadly Sins" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/sevendeadlysins.jpg" class="card-img-top" alt="The Seven Deadly Sins" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">The Seven Deadly Sins</h5>
+    </div>
+  </div>
+
+  <!-- Devilman Crybaby -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Devilman Crybaby" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/devilman.jpg" class="card-img-top" alt="Devilman Crybaby" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Devilman Crybaby</h5>
+    </div>
+  </div>
+
+  <!-- Fullmetal Alchemist -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Fullmetal Alchemist" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/fma.jpg" class="card-img-top" alt="Fullmetal Alchemist" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Fullmetal Alchemist</h5>
+    </div>
+  </div>
+
+  <!-- Fullmetal Alchemist: Brotherhood -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Fullmetal Alchemist: Brotherhood" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/fmab.png" class="card-img-top" alt="Fullmetal Alchemist: Brotherhood" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Fullmetal Alchemist: Brotherhood</h5>
+    </div>
+  </div>
+
+  <!-- Death Note -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Death Note" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/deathnote.jpg" class="card-img-top" alt="Death Note" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Death Note</h5>
+    </div>
+  </div>
+
+  <!-- Attack on Titan -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Attack on Titan" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/aot.jpeg" class="card-img-top" alt="Attack on Titan" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Attack on Titan</h5>
+    </div>
+  </div>
+
+  <!-- Solo Leveling -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Solo Leveling" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/sololeveling.jpeg" class="card-img-top" alt="Solo Leveling" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Solo Leveling</h5>
+    </div>
+  </div>
+
+  <!-- Naruto -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Naruto" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/naruto.jpg" class="card-img-top" alt="Naruto" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Naruto</h5>
+    </div>
+  </div>
+
+  <!-- Boruto -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Boruto: Naruto Next Generations" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/boruto.jpg" class="card-img-top" alt="Boruto: Naruto Next Generations" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Boruto: Naruto Next Generations</h5>
+    </div>
+  </div>
+
+  <!-- Afro Samurai -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Afro Samurai" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/afro.jpg" class="card-img-top" alt="Afro Samurai" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Afro Samurai</h5>
+    </div>
+  </div>
+
+  <!-- Jujutsu Kaisen -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Jujutsu Kaisen" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/jujutsu.jpg" class="card-img-top" alt="Jujutsu Kaisen" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Jujutsu Kaisen</h5>
+    </div>
+  </div>
+
+  <!-- Cyberpunk Edgerunners -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Cyberpunk: Edgerunners" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/cyberpunk.jpg" class="card-img-top" alt="Cyberpunk: Edgerunners" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Cyberpunk: Edgerunners</h5>
+    </div>
+  </div>
+
+  <!-- Vinland Saga -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Vinland Saga" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/vinland.jpg" class="card-img-top" alt="Vinland Saga" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Vinland Saga</h5>
+    </div>
+  </div>
+
+    <!-- ================= BERSERK ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Berserk" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/berserk.jpg" class="card-img-top" alt="Berserk" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Berserk</h5>
+    </div>
+  </div>
+
+  <!-- ================= DEMON SLAYER ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Demon Slayer" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/demonslayer.jpg" class="card-img-top" alt="Demon Slayer" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Demon Slayer</h5>
+    </div>
+  </div>
+
+  <!-- ================= FRIEREN ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Frieren" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/frieren.jpg" class="card-img-top" alt="Frieren" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Frieren</h5>
+    </div>
+  </div>
+
+  <!-- ================= HUNTER X HUNTER ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Hunter x Hunter" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/hunterxhunter.jpg" class="card-img-top" alt="Hunter x Hunter" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Hunter x Hunter</h5>
+    </div>
+  </div>
+
+  <!-- ================= BLEACH ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Bleach" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/bleach.jpg" class="card-img-top" alt="Bleach" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Bleach</h5>
+    </div>
+  </div>
+
+  <!-- ================= MONSTER ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Monster" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/monster.jpg" class="card-img-top" alt="Monster" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Monster</h5>
+    </div>
+  </div>
+
+  <!-- ================= ONE PUNCH MAN ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="One Punch Man" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/onepunchman.jpg" class="card-img-top" alt="One Punch Man" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">One Punch Man</h5>
+    </div>
+  </div>
+
+  <!-- ================= COWBOY BEBOP ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Cowboy Bebop" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/cowboybebop.jpg" class="card-img-top" alt="Cowboy Bebop" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Cowboy Bebop</h5>
+    </div>
+  </div>
+
+  <!-- ================= MOB PSYCHO 100 ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Mob Psycho 100" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/mobpsycho100.jpg" class="card-img-top" alt="Mob Psycho 100" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Mob Psycho 100</h5>
+    </div>
+  </div>
+
+  <!-- ================= TOKYO GHOUL ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Tokyo Ghoul" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/tokyoghoul.jpg" class="card-img-top" alt="Tokyo Ghoul" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Tokyo Ghoul</h5>
+    </div>
+  </div>
+
+  <!-- ================= HELLSING ================= -->
+  <div class="card bg-dark text-white" data-category="anime" data-title="Hellsing" style="width: 14rem; border-radius: 12px; overflow: hidden; flex: 0 0 auto;">
+    <div style="position: relative;">
+      <img src="fotot/hellsing.jpg" class="card-img-top" alt="Hellsing" style="border-radius: 0; width: 100%;">
+      <button class="save-btn" onclick="alert('Show Saved!')">+</button>
+    </div>
+    <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+      <h5 class="card-title mb-0">Hellsing</h5>
+    </div>
+  </div>
+  </div> <!-- end of anime poster-row -->
+  <!-- ADD: Genre rows (appear under Anime, above Watch Later) -->
+<div id="genreRowsContainer">
+  <!-- Action -->
+  <div class="d-flex align-items-center px-4 pt-4 pb-2">
+    <h3 class="mb-0" style="font-weight: bold;">Action</h3>
+    <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+  </div>
+  <div id="genre-action-posters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4"
+       style="overflow-x: auto; gap: 1rem;"></div>
+
+  <!-- Drama -->
+  <div class="d-flex align-items-center px-4 pt-4 pb-2">
+    <h3 class="mb-0" style="font-weight: bold;">Drama</h3>
+    <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+  </div>
+  <div id="genre-drama-posters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4"
+       style="overflow-x: auto; gap: 1rem;"></div>
+
+  <!-- Comedy -->
+  <div class="d-flex align-items-center px-4 pt-4 pb-2">
+    <h3 class="mb-0" style="font-weight: bold;">Comedy</h3>
+    <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+  </div>
+  <div id="genre-comedy-posters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4"
+       style="overflow-x: auto; gap: 1rem;"></div>
+
+  <!-- Thriller -->
+  <div class="d-flex align-items-center px-4 pt-4 pb-2">
+    <h3 class="mb-0" style="font-weight: bold;">Thriller</h3>
+    <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+  </div>
+  <div id="genre-thriller-posters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4"
+       style="overflow-x: auto; gap: 1rem;"></div>
+
+  <!-- Sci-Fi -->
+  <div class="d-flex align-items-center px-4 pt-4 pb-2">
+    <h3 class="mb-0" style="font-weight: bold;">Sci‑Fi</h3>
+    <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+  </div>
+  <div id="genre-scifi-posters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4"
+       style="overflow-x: auto; gap: 1rem;"></div>
+</div>
+<!-- End Genre rows -->
+<!-- ADD: Watch Later row (hidden by default) -->
+<div id="watchLaterRow" style="display:none;">
+  <div class="d-flex align-items-center px-4 pt-4 pb-2">
+    <h3 class="mb-0" style="font-weight: bold;">Watch Later</h3>
+    <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+  </div>
+  <div id="watchLaterPosters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4" style="overflow-x: auto; gap: 1rem;"></div>
+</div>
+<!-- End Watch Later row -->
+<!-- Footer (full-width background, constrained content) -->
+<div class="site-footer-wrapper">
+  <div class="container">
+    <footer class="py-3 my-4 site-footer">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+        <li class="nav-item"><a href="#" class="nav-link px-2">Home</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2">Movies</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2">TV Shows</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2">Animes</a></li>
+        <li class="nav-item"><a href="#" class="nav-link px-2">Trailers</a></li>
+      </ul>
+      <p class="text-center">© 2025 Company, Inc</p>
+    </footer>
+  </div>
+</div>
+<script>
+
+
+    
+
+    // current language (persisted in localStorage)
+    const stored = localStorage.getItem('siteLang');
+    let currentLang = stored || 'en';
+
+    function t(key) {
+      if (!key) return '';
+      const map = I18N[currentLang] || I18N['en'];
+      return map[key] !== undefined ? map[key] : key;
+    }
+
+    // Apply translations to known UI elements
+    function applyTranslations() {
+      // headers (Movies / TV Shows / Anime / Watch Later)
+      document.querySelectorAll('h3').forEach(h => {
+        const txt = (h.textContent || '').trim();
+        if (txt === 'Movies' || txt === 'TV Shows' || txt === 'Anime' || txt === 'Watch Later') {
+          h.textContent = t(txt);
+        }
+      });
+
+      // footer links (assume order matches markup)
+      const footerLinks = Array.from(document.querySelectorAll('.site-footer .nav .nav-link'));
+      const footerKeys = ['Home','Movies','TV Shows','Anime','Contact'];
+      footerLinks.forEach((a, i) => { if (footerKeys[i]) a.textContent = t(footerKeys[i]); });
+
+      // footer copyright line
+      const footerP = document.querySelector('.site-footer p.text-center');
+      if (footerP) {
+        // keep the © year span
+        const yearSpan = document.getElementById('footerYear');
+        footerP.innerHTML = '© ' + (yearSpan ? yearSpan.outerHTML : ('<span id="footerYear">' + new Date().getFullYear() + '</span>')) + ' WMDB. ' + t('Subscribe text');
+      }
+
+      // category dropdown items (by value or text)
+      document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-item').forEach(item => {
+        const val = (item.getAttribute('data-value') || '').toLowerCase();
+        if (val === 'all' || item.textContent.trim() === 'All') item.textContent = t('All');
+        if (val === 'movie' || item.textContent.trim() === 'Movies') item.textContent = t('Movies');
+        if (val === 'tvshow' || item.textContent.trim() === 'TV Shows') item.textContent = t('TV Shows');
+        if (val === 'anime' || item.textContent.trim() === 'Anime') item.textContent = t('Anime');
+        if (val === 'watchlater' || item.textContent.trim() === 'Watch Later') item.textContent = t('Watch Later');
+      });
+
+      // search placeholder
+      if (searchInput) searchInput.placeholder = t('Search placeholder');
+
+      // Search button text
+      const searchBtn = document.querySelector('.searchbar-btn');
+      if (searchBtn) searchBtn.textContent = t('Search');
+
+      // Sign Up link in navbar
+      const signup = document.querySelector('.nav-btn[href="signup.html"]');
+      if (signup) signup.textContent = t('Sign Up');
+
+      // Translate visible card titles (movie/show/anime names) using MOVIE_TITLES map
+      // ensure every movie has a mapping for every supported language (fallback to English)
+      const supportedLangs = Object.keys(I18N || {});
+      document.querySelectorAll('.card[data-title]').forEach(card => {
+        const eng = (card.getAttribute('data-title') || '').toString();
+        if (!eng) return;
+        if (!MOVIE_TITLES[eng]) MOVIE_TITLES[eng] = {};
+        supportedLangs.forEach(lc => {
+          if (!MOVIE_TITLES[eng][lc]) MOVIE_TITLES[eng][lc] = eng;
+        });
+        const titles = MOVIE_TITLES[eng];
+        const alt = titles[currentLang] || titles[currentLang.split('-')[0]] || eng;
+        const h = card.querySelector('.card-title');
+        if (h) h.textContent = alt;
+      });
+
+      // also update any static elements that match keys (best-effort)
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+    }
+
+    // set language button label
+    function setLangBtnLabel(code) {
+      langBtn.textContent = (code || '').toUpperCase().substring(0,2);
+    }
+
+    // wire the menu toggle and selection behavior
+    document.addEventListener('click', function(e) {
+      if (langBtn && langBtn.contains(e.target)) {
+        langMenu.style.display = langMenu.style.display === 'block' ? 'none' : 'block';
+      } else if (langMenu && !langMenu.contains(e.target)) {
+        langMenu.style.display = 'none';
+      }
+    });
+
+    // language selection items
+    if (langMenu) {
+      langMenu.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          // allow menu item to indicate language code via data-lang or parse from text
+          const code = this.getAttribute('data-lang') || (this.dataset && this.dataset.lang) || null;
+          if (code) currentLang = code;
+          else {
+            // fallback: pick by language name present in text
+            const txt = (this.textContent || '').toLowerCase();
+            if (txt.includes('english')) currentLang = 'en';
+            else if (txt.includes('es') || txt.includes('español') || txt.includes('spanish')) currentLang = 'es';
+            else currentLang = 'en';
+          }
+          localStorage.setItem('siteLang', currentLang);
+          setLangBtnLabel(currentLang);
+          applyTranslations();
+          langMenu.style.display = 'none';
+        });
+      });
+    }
+
+    // initialize
+    setLangBtnLabel(currentLang);
+    // Apply right away (in case stored language differs)
+    document.addEventListener('DOMContentLoaded', applyTranslations);
+    // also run immediately if DOM is already ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') applyTranslations();
+
+    // expose t() globally for other scripts (overlay will call it)
+    window.__t = t;
+    window.__currentLang = () => currentLang;
+
+    // Override native alert to translate common messages (so inline alert('Movie Saved!') works)
+    (function overrideAlert() {
+      const nativeAlert = window.alert.bind(window);
+      window.alert = function (msg) {
+        try {
+          if (typeof msg === 'string') {
+            if (msg === 'Movie Saved!') msg = (window.__t ? window.__t('Movie Saved!') : msg);
+            else if (msg === 'Show Saved!') msg = (window.__t ? window.__t('Show Saved!') : msg);
+            else if (msg === 'Remove from Watch Later') msg = (window.__t ? window.__t('Remove from Watch Later') : msg);
+          }
+        } catch (e) { /* ignore */ }
+        nativeAlert(msg);
+      };
+    })();
+</script>
+<div id="movieOverlay" class="movie-overlay d-none">
+  <div class="movie-popup" role="dialog" aria-modal="true">
+  <button class="close-btn" onclick="closeMovieOverlay()" aria-label="Close dialog">×</button>
+
+    <div class="popup-body">
+      <!-- Poster (left) -->
+      <img id="moviePosterImg" src="" alt="" class="movie-poster">
+
+      <!-- Right column: trailer above, text below -->
+      <div class="right-column">
+        <iframe id="movieTrailerIframe" class="movie-trailer"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+
+        <div id="moviePopupContent" class="movie-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // single consolidated overlay function (overwrites previous definitions)
+ function openMovieOverlay(movieTitle, posterSrc, description, trailerSrc, genres, director, writers, stars, imdb, popularity, metascore) {
+    const overlay = document.getElementById('movieOverlay');
+    const content = document.getElementById('moviePopupContent');
+    const posterImg = document.getElementById('moviePosterImg');
+    const trailerIframe = document.getElementById('movieTrailerIframe');
+    const closeBtn = overlay.querySelector('.close-btn');
+
+    // left poster
+    posterImg.src = posterSrc || '';
+    posterImg.alt = movieTitle || 'Poster';
+
+    // right iframe: convert YouTube watch URL to embed
+    if (trailerSrc) {
+      const embed = toYouTubeEmbed(trailerSrc);
+      trailerIframe.src = embed;
+      trailerIframe.style.display = 'block';
+    } else {
+      trailerIframe.removeAttribute('src');
+      trailerIframe.style.display = 'block';
+      trailerIframe.style.background = '#232526'; 
+    }
+
+    // build content (translation-aware)
+    const _t = (typeof window.__t === 'function') ? window.__t : (k => k);
+    content.innerHTML = `
+      <h2 style="margin-top:0; font-size:1.4rem; margin-bottom:8px;">${movieTitle || ''}</h2>
+      <div style="color:#bbb; margin-bottom:10px; font-size:0.95rem;">
+        ${imdb ? `${_t('WMDb Rating')}: <strong style="color:#f5c518;">${imdb}</strong>` : ''}
+        ${popularity ? `&nbsp;&nbsp;<span style="color:#4CAF50; font-weight:700;">${_t('Popularity')}: ${popularity}</span>` : ''}
+      </div>
+      <p style="line-height:1.45; margin-bottom:12px;">${description || ''}</p>
+      <div style="margin-top:auto; font-size:0.95rem; color:#ddd;">
+        <div><strong>${_t('Director')}:</strong> ${director || ''}</div>
+        <div><strong>${_t('Writers')}:</strong> ${Array.isArray(writers) ? writers.join(', ') : (writers || '')}</div>
+        <div><strong>${_t('Stars')}:</strong> ${Array.isArray(stars) ? stars.join(', ') : (stars || '')}</div>
+        ${genres && genres.length ? `<div style="margin-top:8px;">${genres.map(g => `<span style="background:#232526;color:#fff;border-radius:12px;padding:4px 10px;margin-right:6px;font-size:0.85rem;">${g}</span>`).join('')}</div>` : ''}
+      </div>
+    `;
+
+    // show overlay and lock body scroll
+    overlay.classList.remove('d-none');
+    overlay.classList.add('show');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    // focus management: move focus to close button for keyboard users
+    if (closeBtn && typeof closeBtn.focus === 'function') closeBtn.focus();
+
+    // handle Escape key to close
+    function onEsc(e) {
+      if (e.key === 'Escape') closeMovieOverlay();
+    }
+    document.addEventListener('keydown', onEsc);
+
+    // click outside content to close (overlay area but not the popup)
+    function onOverlayClick(e) {
+      const popup = overlay.querySelector('.movie-popup');
+      if (!popup) return;
+      if (!popup.contains(e.target)) {
+        closeMovieOverlay();
+      }
+    }
+    overlay.addEventListener('click', onOverlayClick);
+
+    // MOBILE: rearrange DOM so mobile layout differs but desktop stays the same
+    (function applyMobileDOMIfNeeded() {
+      try {
+        const BREAKPOINT = 520;
+        if (window.innerWidth > BREAKPOINT) return;
+        const popup = overlay.querySelector('.movie-popup');
+        const popupBody = popup ? popup.querySelector('.popup-body') : null;
+        if (!popupBody) return;
+
+        // save original HTML to restore later
+        overlay._mobileOriginalBody = popupBody.innerHTML;
+
+        // grab existing nodes
+        const trailer = document.getElementById('movieTrailerIframe');
+        const content = document.getElementById('moviePopupContent');
+        const poster = document.getElementById('moviePosterImg');
+
+        // build mobile structure
+        const mobileContainer = document.createElement('div');
+        mobileContainer.className = 'mobile-container';
+
+        const mobileHeader = document.createElement('div');
+        mobileHeader.className = 'mobile-header';
+        // move title/meta from content into header if present
+        if (content) {
+          const titleEl = content.querySelector('h2');
+          const metaEl = content.querySelector('div');
+          if (titleEl) mobileHeader.appendChild(titleEl);
+          if (metaEl) mobileHeader.appendChild(metaEl);
+        }
+
+        const trailerWrap = document.createElement('div');
+        trailerWrap.className = 'mobile-trailer-wrap';
+        if (trailer) trailerWrap.appendChild(trailer);
+
+        const textWrap = document.createElement('div');
+        textWrap.className = 'mobile-text-wrap';
+        if (content) textWrap.appendChild(content);
+
+        // append in preferred mobile order: header, trailer, text
+        mobileContainer.appendChild(mobileHeader);
+        mobileContainer.appendChild(trailerWrap);
+        mobileContainer.appendChild(textWrap);
+
+        // remove poster from the popup body (so it won't show on mobile)
+        if (poster && poster.parentNode) poster.parentNode.removeChild(poster);
+
+        // replace popup body children
+        popupBody.innerHTML = '';
+        popupBody.appendChild(mobileContainer);
+
+        // mark applied and provide cleanup
+        overlay._mobileApplied = true;
+        overlay._mobileRestore = function() {
+          try {
+            if (!overlay._mobileOriginalBody) return;
+            popupBody.innerHTML = overlay._mobileOriginalBody;
+            // clear saved state
+            overlay._mobileOriginalBody = null;
+            overlay._mobileApplied = false;
+            overlay._mobileRestore = null;
+          } catch (e) { /* ignore */ }
+        };
+      } catch (e) { console.warn('mobile layout failed', e); }
+    })();
+
+    // store handlers so closeMovieOverlay can remove them
+    overlay._onEsc = onEsc;
+    overlay._onOverlayClick = onOverlayClick;
+  }
+  function closeMovieOverlay() {
+    const overlay = document.getElementById('movieOverlay');
+    const trailerIframe = document.getElementById('movieTrailerIframe');
+    overlay.classList.add('d-none');
+    overlay.classList.remove('show');
+    // clear iframe src to stop playback
+    if (trailerIframe) trailerIframe.src = '';
+    const poster = document.getElementById('moviePosterImg');
+    if (poster) poster.src = '';
+    const content = document.getElementById('moviePopupContent');
+    if (content) content.innerHTML = '';
+
+    // restore scrolling
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+
+    // remove added event listeners
+    if (overlay && overlay._onEsc) document.removeEventListener('keydown', overlay._onEsc);
+    if (overlay && overlay._onOverlayClick) overlay.removeEventListener('click', overlay._onOverlayClick);
+    overlay._onEsc = null;
+    overlay._onOverlayClick = null;
+
+    // return focus to main content (try the search input)
+    const searchInput = document.getElementById('navbarSearchInput');
+    if (searchInput) searchInput.focus();
+  }
+</script>
+
+
+<script>
+  // consolidated overlay function (sets poster on left and YouTube iframe on the right)
+  function toYouTubeEmbed(url) {
+    try {
+      if (!url) return '';
+      // handle common youtube formats
+      if (url.includes('youtube.com/watch')) {
+        const id = new URL(url).searchParams.get('v');
+        return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
+      }
+      if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1].split(/[?&]/)[0];
+        return id ? `https://www.youtube.com/embed/${id}?rel=0` : '';
+      }
+      // if already an embed URL or other remote url, return as-is
+      return url;
+    } catch (e) { return ''; }
+  }
+
+  
+
+ document.querySelectorAll('.card-img-top').forEach(img => {
+  img.addEventListener('click', function() {
+    const card = this.closest('.card');
+    const titleEl = card ? card.querySelector('.card-title') : null;
+    const title = titleEl ? titleEl.textContent.trim() : '';
+    const src = this.src;
+
+    if (title === "The Batman") {
+      openMovieOverlay(
+        "The Batman",
+        "fotot/batman poster.png",
+        "When a sadistic serial killer begins murdering key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement.",
+        "https://www.youtube.com/watch?v=mqqft2x_Aa4",
+        ["Action","Crime","Drama","Mystery","Thriller"],
+        "Matt Reeves",
+        ["Matt Reeves","Peter Craig","Bob Kane"],
+        ["Robert Pattinson","Zoë Kravitz","Jeffrey Wright"],
+        "7.8/10",
+        "136",
+        "72"
+      );
+    } else if (title === "Superman") {
+      openMovieOverlay(
+        "Superman",
+        "fotot/superman.jpg",
+        "Superman must reconcile his alien Kryptonian heritage with his human upbringing as reporter Clark Kent...",
+        "https://www.youtube.com/watch?v=Ox8ZLF6cGM0",
+        ["Action Epic","Adventure Epic","Globetrotting Adventure","Sci-Fi Epic","Superhero", "Action", "Adventure", "Sci-Fi"],
+        "James Gunn",
+        ["James Gunn","Jerry Siegel","Joe Shuster"],
+        ["David Corenswet","Rachel Brosnahan","Nicholas Hoult"],
+        "7.3/10",
+        "2",
+        "72"
+      );
+    } 
+    else if (title === "The Fantastic Four: First Steps") {
+      openMovieOverlay(
+        "The Fantastic Four: First Steps",
+        "fotot/fantasticfour.jpg",
+        "Forced to balance their roles as heroes with the strength of their family bond...",
+        "https://www.youtube.com/watch?v=18QQWa5MEcs",
+        ["Space Sci-Fi","Superhero","Action","Sci-Fi","Adventure"],
+        "Matt Shakman",
+        ["Josh Friedman", "Eric Pearson", "Jeff Kaplan"],
+        ["Pedro Pascal", "Vanessa Kirby", "Ebon Moss-Bachrach"],
+        "7.3/10",
+        "15",
+        "72"
+      );
+    } 
+    else if (title === "Inception") {
+      openMovieOverlay(
+        "Inception",
+        "fotot/inception.jpg",
+        "A thief who steals corporate secrets through the use of dream-sharing technology...",
+        "https://www.youtube.com/watch?v=YoHD9XEInc0",
+        ["Action Epic", "Adventure", "Epic", "Adventure Epic", "Psychologic Thriller"],
+        "Christopher Nolan",
+        ["Christopher Nolan"],
+        ["Leonardo DiCaprio", "Joseph Gordon-Levitt", "Elliot Page"],
+        "8.8/10",
+        "72",
+        "72"
+      );
+    } 
+    else if (title === "Fight Club") {
+      openMovieOverlay(
+        "Fight Club",
+        "fotot/fightclub.jpg",
+        "An insomniac office worker, looking for a way to change his life...",
+        "https://www.youtube.com/watch?v=qtRKdVHc-cE",
+        ["Drama", "Thriller"],
+        "David Fincher",
+        ["Chuck Palahniuk", "Jim Uhls"],
+        ["Brad Pitt", "Edward Norton", "Helena Bonham Carter"],
+        "8.8/10",
+        "113",
+        "72"
+      );
+    } 
+        else if (title === "The Amazing Spider-Man") {
+      openMovieOverlay(
+        "The Amazing Spider-Man",
+        "fotot/tasm.jpg",
+        "When bitten by a genetically altered spider, nerdy high school student Peter Parker is endowed with amazing powers.",
+        "https://youtu.be/-tnxzJ0SSOw?si=o7CgVYavAZGT_VFA",
+        ["Superhero", "Action", "Sci-Fi"],
+        "Marc Webb",
+        ["James Vanderbilt", "Alvin Sargent", "Steve Kloves"],
+        ["Andrew Garfield", "Emma Stone", "Rhys Ifans"],
+        "6.9/10",
+        "666",
+        "72"
+      );
+    } 
+    else if (title === "The Amazing Spider-Man 2") {
+      openMovieOverlay(
+        "The Amazing Spider-Man 2",
+        "fotot/tasm2.jpg",
+        "When New York is put under siege by Oscorp, it is up to Spider-Man to save the city he swore to protect as well as his loved ones.",
+        "https://www.youtube.com/watch?v=nbp3Ra3Yp74",
+        ["Superhero", "Action", "Sci-Fi"],
+        "Marc Webb",
+        ["Alex Kurtzman", "Roberto Orci", "Jeff Pinkner"],
+        ["Andrew Garfield", "Emma Stone", "Jamie Foxx"],
+        "6.6/10",
+        "1,237",
+        "72"
+      );
+    } else if (title === "Shutter Island") {
+  openMovieOverlay(
+    "Shutter Island",
+    "fotot/shutterisland.jpg",
+    "In 1954, a U.S. Marshal investigates the disappearance of a murderer who escaped from a hospital for the criminally insane.",
+    "https://www.youtube.com/watch?v=5iaYLCiq5RM",
+    ["Mystery", "Thriller", "Drama"],
+    "Martin Scorsese",
+    ["Laeta Kalogridis", "Dennis Lehane"],
+    ["Leonardo DiCaprio", "Mark Ruffalo", "Ben Kingsley"],
+    "8.2/10",
+    "138",
+    "74"
+  );
+} 
+else if (title === "Logan") {
+  openMovieOverlay(
+    "Logan",
+    "fotot/logan.jpg",
+    "In a near future, a weary Logan cares for an ailing Professor X, while trying to protect a young mutant from dark forces.",
+    "https://www.youtube.com/watch?v=Div0iP65aZo",
+    ["Action", "Drama", "Sci-Fi"],
+    "James Mangold",
+    ["Scott Frank", "James Mangold", "Michael Green"],
+    ["Hugh Jackman", "Patrick Stewart", "Dafne Keen"],
+    "8.1/10",
+    "137",
+    "78"
+  );
+} 
+else if (title === "The Prestige") {
+  openMovieOverlay(
+    "The Prestige",
+    "fotot/theprestige.jpg",
+    "Two stage magicians engage in a bitter rivalry to create the ultimate illusion, leading to tragic consequences.",
+    "https://www.youtube.com/watch?v=o4gHCmTQDVI",
+    ["Drama", "Mystery", "Thriller"],
+    "Christopher Nolan",
+    ["Jonathan Nolan", "Christopher Nolan", "Christopher Priest"],
+    ["Hugh Jackman", "Christian Bale", "Michael Caine"],
+    "8.5/10",
+    "130",
+    "75"
+  );
+} 
+else if (title === "Se7en") {
+  openMovieOverlay(
+    "Se7en",
+    "fotot/se7en.jpg",
+    "Two detectives hunt a serial killer who uses the seven deadly sins as his motives.",
+    "https://www.youtube.com/watch?v=znmZoVkCjpI",
+    ["Crime", "Drama", "Mystery", "Thriller"],
+    "David Fincher",
+    ["Andrew Kevin Walker"],
+    ["Brad Pitt", "Morgan Freeman", "Gwyneth Paltrow"],
+    "8.6/10",
+    "127",
+    "75"
+  );
+} 
+else if (title === "2001: A Space Odyssey") {
+  openMovieOverlay(
+    "2001: A Space Odyssey",
+    "fotot/spaceoddyssey.jpg",
+    "A voyage to Jupiter with the sentient computer HAL after the discovery of a mysterious monolith affecting human evolution.",
+    "https://youtu.be/oR_e9y-bka0?si=xuX8wIHIc_bUFr3K",
+    ["Adventure", "Sci-Fi"],
+    "Stanley Kubrick",
+    ["Stanley Kubrick", "Arthur C. Clarke"],
+    ["Keir Dullea", "Gary Lockwood", "William Sylvester"],
+    "8.3/10",
+    "149",
+    "72"
+  );
+} 
+else if (title === "Tenet") {
+  openMovieOverlay(
+    "Tenet",
+    "fotot/tenet.jpg",
+    "A secret agent manipulates the flow of time to prevent World War III.",
+    "https://www.youtube.com/watch?v=L3pk_TBkihU",
+    ["Action", "Sci-Fi", "Thriller"],
+    "Christopher Nolan",
+    ["Christopher Nolan"],
+    ["John David Washington", "Robert Pattinson", "Elizabeth Debicki"],
+    "7.5/10",
+    "150",
+    "74"
+  );
+}
+else if (title === "Taxi Driver") {
+  openMovieOverlay(
+    "Taxi Driver",
+    "fotot/taxidriver.jpg",
+    "A mentally unstable veteran works as a nighttime taxi driver in New York City where the perceived decadence and sleaze feeds his urge for violent action.",
+    "https://www.youtube.com/watch?v=UUxD4-dEzn0",
+    ["Crime", "Drama"],
+    "Martin Scorsese",
+    ["Paul Schrader"],
+    ["Robert De Niro", "Jodie Foster", "Harvey Keitel"],
+    "8.3/10",
+    "114",
+    "74"
+  );
+}
+else if (title === "Star Wars: The Phantom Menace") {
+  openMovieOverlay(
+    "Star Wars: The Phantom Menace",
+    "fotot/phantom menace.jpg",
+    "Two Jedi Knights discover a boy strong with the Force while the evil Sith plot to take over the galaxy.",
+    "https://www.youtube.com/watch?v=bD7bpG-zDJQ",
+    ["Action", "Adventure", "Fantasy", "Sci-Fi"],
+    "George Lucas",
+    ["George Lucas"],
+    ["Liam Neeson", "Ewan McGregor", "Natalie Portman"],
+    "6.5/10",
+    "136",
+    "70"
+  );
+}
+else if (title === "Star Wars: Attack of the Clones") {
+  openMovieOverlay(
+    "Star Wars: Attack of the Clones",
+    "fotot/attack of the clones.jpg",
+    "Anakin Skywalker begins to fall for Padmé Amidala while a separatist movement threatens the Republic.",
+    "https://youtu.be/gYbW1F_c9eM?si=2tqX9JhD2dsifCUm",
+    ["Action", "Adventure", "Fantasy", "Sci-Fi"],
+    "George Lucas",
+    ["George Lucas"],
+    ["Ewan McGregor", "Natalie Portman", "Hayden Christensen"],
+    "6.5/10",
+    "142",
+    "70"
+  );
+}
+else if (title === "Star Wars: Revenge of the Sith") {
+  openMovieOverlay(
+    "Star Wars: Revenge of the Sith",
+    "fotot/rots.jpg",
+    "Anakin Skywalker is seduced by the dark side of the Force and becomes Darth Vader, leading to the fall of the Republic.",
+    "https://www.youtube.com/watch?v=5UnjrG_N8hU",
+    ["Action", "Adventure", "Sci-Fi", "Fantasy"],
+    "George Lucas",
+    ["George Lucas"],
+    ["Ewan McGregor", "Natalie Portman", "Hayden Christensen"],
+    "7.5/10",
+    "140",
+    "70"
+  );
+}
+else if (title === "Star Wars: A New Hope") {
+  openMovieOverlay(
+    "Star Wars: A New Hope",
+    "fotot/anewhope.jpg",
+    "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, and a Wookiee to save the galaxy from the Empire's world-destroying battle station.",
+    "https://www.youtube.com/watch?v=vZ734NWnAHA",
+    ["Action", "Adventure", "Sci-Fi", "Fantasy"],
+    "George Lucas",
+    ["George Lucas"],
+    ["Mark Hamill", "Harrison Ford", "Carrie Fisher"],
+    "8.6/10",
+    "121",
+    "70"
+  );
+}
+else if (title === "Star Wars: The Empire Strikes Back") {
+  openMovieOverlay(
+    "Star Wars: The Empire Strikes Back",
+    "fotot/theempirestrikesback.jpg",
+    "The Rebels suffer setbacks against the Empire, and Luke Skywalker seeks training from Jedi Master Yoda.",
+    "https://www.youtube.com/watch?v=JNwNXF9Y6kY",
+    ["Action", "Adventure", "Sci-Fi", "Fantasy"],
+    "Irvin Kershner",
+    ["Leigh Brackett", "Lawrence Kasdan", "George Lucas"],
+    ["Mark Hamill", "Harrison Ford", "Carrie Fisher"],
+    "8.7/10",
+    "124",
+    "70"
+  );
+}
+else if (title === "Star Wars: Return of the Jedi") {
+  openMovieOverlay(
+    "Star Wars: Return of the Jedi",
+    "fotot/returnofthejedi.jpg",
+    "Luke Skywalker confronts Darth Vader and the Emperor while the Rebels attempt to destroy the second Death Star.",
+    "https://www.youtube.com/watch?v=7L8p7_SLzvU",
+    ["Action", "Adventure", "Sci-Fi", "Fantasy"],
+    "Richard Marquand",
+    ["Lawrence Kasdan", "George Lucas"],
+    ["Mark Hamill", "Harrison Ford", "Carrie Fisher"],
+    "8.3/10",
+    "131",
+    "70"
+  );
+}
+else if (title === "Batman Begins") {
+  openMovieOverlay(
+    "Batman Begins",
+    "fotot/batmanbegins.jpg",
+    "Bruce Wayne trains with the League of Shadows and returns to Gotham to fight crime and the corrupt forces within the city.",
+    "https://www.youtube.com/watch?v=neY2xVmOfUM",
+    ["Action", "Adventure", "Thriller", "Superhero"],
+    "Christopher Nolan",
+    ["Christopher Nolan", "David S. Goyer"],
+    ["Christian Bale", "Michael Caine", "Liam Neeson"],
+    "8.2/10",
+    "140",
+    "74"
+  );
+}
+else if (title === "The Dark Knight") {
+  openMovieOverlay(
+    "The Dark Knight",
+    "fotot/thedarkknight.jpg",
+    "Batman faces the Joker, who seeks to create chaos and force Batman into crossing his moral line.",
+    "https://www.youtube.com/watch?v=EXeTwQWrcwY",
+    ["Action", "Crime", "Drama", "Thriller", "Superhero"],
+    "Christopher Nolan",
+    ["Jonathan Nolan", "Christopher Nolan", "David S. Goyer"],
+    ["Christian Bale", "Heath Ledger", "Aaron Eckhart"],
+    "9.0/10",
+    "152",
+    "74"
+  );
+}
+else if (title === "The Dark Knight Rises") {
+  openMovieOverlay(
+    "The Dark Knight Rises",
+    "fotot/thedarkknightrises.jpg",
+    "Eight years after the Joker’s reign, Batman must return to stop the merciless Bane from destroying Gotham.",
+    "https://www.youtube.com/watch?v=g8evyE9TuYk",
+    ["Action", "Adventure", "Thriller", "Superhero"],
+    "Christopher Nolan",
+    ["Jonathan Nolan", "Christopher Nolan", "David S. Goyer"],
+    ["Christian Bale", "Tom Hardy", "Anne Hathaway"],
+    "8.4/10",
+    "165",
+    "74"
+  );
+}
+else if (title === "Donnie Darko") {
+  openMovieOverlay(
+    "Donnie Darko",
+    "fotot/donniedarko.jpg",
+    "A troubled teenager is plagued by visions of a man in a rabbit suit who manipulates him to commit crimes.",
+    "https://www.youtube.com/watch?v=ZZyBaFYFySk",
+    ["Drama", "Mystery", "Sci-Fi", "Thriller"],
+    "Richard Kelly",
+    ["Richard Kelly"],
+    ["Jake Gyllenhaal", "Jena Malone", "Mary McDonnell"],
+    "8.0/10",
+    "113",
+    "74"
+  );
+}
+else if (title === "No Country for Old Men") {
+  openMovieOverlay(
+    "No Country for Old Men",
+    "fotot/nocountryforoldmen.jpg",
+    "Violence and mayhem ensue after a hunter stumbles upon drug money in the Texas desert.",
+    "https://www.youtube.com/watch?v=38A__WT3-o0",
+    ["Crime", "Drama", "Thriller"],
+    "Joel Coen, Ethan Coen",
+    ["Joel Coen", "Ethan Coen", "Cormac McCarthy"],
+    ["Tommy Lee Jones", "Javier Bardem", "Josh Brolin"],
+    "8.1/10",
+    "122",
+    "74"
+  );
+}
+else if (title === "Interstellar") {
+  openMovieOverlay(
+    "Interstellar",
+    "fotot/interstellar.jpg",
+    "A team of explorers travel through a wormhole in space to ensure humanity's survival.",
+    "https://www.youtube.com/watch?v=zSWdZVtXT7E",
+    ["Adventure", "Drama", "Sci-Fi"],
+    "Christopher Nolan",
+    ["Jonathan Nolan", "Christopher Nolan"],
+    ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"],
+    "8.6/10",
+    "169",
+    "72"
+  );
+}
+else if (title === "Pulp Fiction") {
+  openMovieOverlay(
+    "Pulp Fiction",
+    "fotot/pulpfiction.jpg",
+    "The lives of two mob hitmen, a boxer, and a gangster's wife intertwine in tales of violence and redemption.",
+    "https://www.youtube.com/watch?v=s7EdQ4FqbhY",
+    ["Crime", "Drama"],
+    "Quentin Tarantino",
+    ["Quentin Tarantino", "Roger Avary"],
+    ["John Travolta", "Uma Thurman", "Samuel L. Jackson"],
+    "8.9/10",
+    "154",
+    "75"
+  );
+}
+else if (title === "The Wolf of Wall Street") {
+  openMovieOverlay(
+    "The Wolf of Wall Street",
+    "fotot/thewolfofwallstreet.jpg",
+    "Based on the true story of Jordan Belfort, chronicling his rise and fall in finance and excess.",
+    "https://www.youtube.com/watch?v=iszwuX1AK6A",
+    ["Biography", "Comedy", "Crime", "Drama"],
+    "Martin Scorsese",
+    ["Terence Winter"],
+    ["Leonardo DiCaprio", "Jonah Hill", "Margot Robbie"],
+    "8.2/10",
+    "180",
+    "75"
+  );
+}
+else if (title === "21") {
+  openMovieOverlay(
+    "21",
+    "fotot/21movie.jpg",
+    "A group of MIT students use card counting techniques to win at blackjack in Las Vegas.",
+    "https://youtu.be/oqkdB7It5Go?si=qyBS20jwyfe-_vZU",
+    ["Biography", "Crime", "Drama", "Thriller"],
+    "Robert Luketic",
+    ["Peter Steinfeld", "Ben Mezrich"],
+    ["Jim Sturgess", "Kevin Spacey", "Kate Bosworth"],
+    "6.8/10",
+    "123",
+    "74"
+  );
+}
+else if (title === "Gladiator") {
+  openMovieOverlay(
+    "Gladiator",
+    "fotot/gladiator.jpg",
+    "A former Roman General seeks revenge after being betrayed by the emperor's corrupt son.",
+    "https://youtu.be/P5ieIbInFpg?si=anQpFv_53sSYVuNw",
+    ["Action", "Adventure", "Drama"],
+    "Ridley Scott",
+    ["David Franzoni", "John Logan", "William Nicholson"],
+    ["Russell Crowe", "Joaquin Phoenix", "Connie Nielsen"],
+    "8.5/10",
+    "155",
+    "74"
+  );
+}
+else if (title === "Breaking Bad") {
+      openMovieOverlay(
+        "Breaking Bad",
+        "fotot/breakingbad.jpg",
+        "A high school chemistry teacher turned methamphetamine producer navigates the dangers of the criminal underworld while trying to provide for his family.",
+        "https://www.youtube.com/watch?v=HhesaQXLuRY",
+        ["Crime", "Drama", "Thriller"],
+        "Vince Gilligan",
+        ["Vince Gilligan"],
+        ["Bryan Cranston", "Aaron Paul", "Anna Gunn"],
+        "9.5/10",
+        "120",
+        "80"
+      );
+    }
+    else if (title === "Dexter") {
+      openMovieOverlay(
+        "Dexter",
+        "fotot/dexter.jpg",
+        "A Miami-based blood splatter expert moonlights as a vigilante serial killer, targeting criminals who escape justice.",
+        "https://youtu.be/YQeUmSD1c3g?si=0lKg5UVw-LsFZ31t",
+        ["Crime", "Drama", "Mystery", "Thriller"],
+        "James Manos Jr.",
+        ["James Manos Jr."],
+        ["Michael C. Hall", "Jennifer Carpenter", "David Zayas"],
+        "8.7/10",
+        "110",
+        "75"
+      );
+    }
+    else if (title === "You") {
+      openMovieOverlay(
+        "You",
+        "fotot/you.jpg",
+        "A dangerously charming man becomes obsessed with the women he dates, using social media and surveillance to insert himself into their lives.",
+        "https://youtu.be/v99ooSjCVhg?si=0ENSXPdNOANY1HjY",
+        ["Crime", "Drama", "Thriller"],
+        "Greg Berlanti, Sera Gamble",
+        ["Greg Berlanti", "Sera Gamble"],
+        ["Penn Badgley", "Elizabeth Lail", "Victoria Pedretti"],
+        "7.7/10",
+        "85",
+        "70"
+      );
+    }
+    else if (title === "Dexter: Original Sin") {
+  openMovieOverlay(
+    "Dexter: Original Sin",
+    "fotot/dexteros.jpg",
+    "Dexter returns in a brand-new chapter exploring his dark instincts in a fresh setting.",
+    "https://www.youtube.com/watch?v=example1",
+    ["Crime", "Drama", "Mystery", "Thriller"],
+    "Showrunner Name",
+    ["Showrunner Name"],
+    ["Michael C. Hall", "Clancy Brown", "Julia Jones"],
+    "7.5/10",
+    "60",
+    "60"
+  );
+}
+else if (title === "Dexter: New Blood") {
+  openMovieOverlay(
+    "Dexter: New Blood",
+    "fotot/dexternewblood.jpig",
+    "Dexter lives under an assumed name in a small town while new mysteries arise.",
+    "https://www.youtube.com/watch?v=example2",
+    ["Crime", "Drama", "Thriller"],
+    "Showrunner Name",
+    ["Showrunner Name"],
+    ["Michael C. Hall", "Jack Alcott", "Julia Jones"],
+    "8.0/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "True Detective") {
+  openMovieOverlay(
+    "True Detective",
+    "fotot/truedetective.jpg",
+    "Anthology series focusing on complex investigations and personal struggles of detectives.",
+    "https://www.youtube.com/watch?v=example3",
+    ["Crime", "Drama", "Mystery", "Thriller"],
+    "Nic Pizzolatto",
+    ["Nic Pizzolatto"],
+    ["Matthew McConaughey", "Woody Harrelson", "Mahershala Ali"],
+    "9.0/10",
+    "75",
+    "75"
+  );
+}
+else if (title === "Dark") {
+  openMovieOverlay(
+    "Dark",
+    "fotot/dark.jpg",
+    "Children disappear in a German town, uncovering a time-travel conspiracy across generations.",
+    "https://www.youtube.com/watch?v=example4",
+    ["Sci-Fi", "Drama", "Mystery", "Thriller"],
+    "Baran bo Odar",
+    ["Baran bo Odar", "Jantje Friese"],
+    ["Louis Hofmann", "Lisa Vicari", "Maja Schöne"],
+    "8.8/10",
+    "72",
+    "72"
+  );
+}
+else if (title === "Sandman") {
+  openMovieOverlay(
+    "Sandman",
+    "fotot/sandman.jpg",
+    "Dream of the Endless restores balance in this adaptation of Neil Gaiman’s iconic comic series.",
+    "https://www.youtube.com/watch?v=example5",
+    ["Fantasy", "Drama", "Adventure"],
+    "Neil Gaiman",
+    ["Neil Gaiman"],
+    ["Tom Sturridge", "Gwendoline Christie", "Boyd Holbrook"],
+    "7.5/10",
+    "60",
+    "60"
+  );
+}
+else if (title === "The Rookie") {
+  openMovieOverlay(
+    "The Rookie",
+    "fotot/therookie.jpg",
+    "John Nolan becomes the oldest rookie at the LAPD, balancing personal life with police work.",
+    "https://www.youtube.com/watch?v=example6",
+    ["Crime", "Drama", "Action"],
+    "Alexi Hawley",
+    ["Alexi Hawley"],
+    ["Nathan Fillion", "Afton Williamson", "Richard T. Jones"],
+    "7.2/10",
+    "55",
+    "55"
+  );
+}
+else if (title === "The Witcher") {
+  openMovieOverlay(
+    "The Witcher",
+    "fotot/thewitcher.jpg",
+    "Geralt of Rivia hunts monsters while navigating a world where humans are often more wicked than beasts.",
+    "https://www.youtube.com/watch?v=example7",
+    ["Fantasy", "Action", "Adventure"],
+    "Lauren Schmidt Hissrich",
+    ["Lauren Schmidt Hissrich"],
+    ["Henry Cavill", "Anya Chalotra", "Freya Allan"],
+    "8.2/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "The Last of Us") {
+  openMovieOverlay(
+    "The Last of Us",
+    "fotot/tlou.jpg",
+    "Post-apocalyptic journey of Joel and Ellie as they survive a dangerous world.",
+    "https://www.youtube.com/watch?v=example8",
+    ["Action", "Drama", "Adventure"],
+    "Craig Mazin",
+    ["Craig Mazin", "Neil Druckmann"],
+    ["Pedro Pascal", "Bella Ramsey"],
+    "9.0/10",
+    "80",
+    "80"
+  );
+}
+else if (title === "Rick and Morty") {
+  openMovieOverlay(
+    "Rick and Morty",
+    "fotot/rick and morty.jpg",
+    "An eccentric scientist and his grandson go on absurd and dangerous interdimensional adventures.",
+    "https://www.youtube.com/watch?v=example9",
+    ["Animation", "Comedy", "Sci-Fi"],
+    "Dan Harmon",
+    ["Dan Harmon", "Justin Roiland"],
+    ["Justin Roiland", "Chris Parnell", "Spencer Grammer"],
+    "9.2/10",
+    "85",
+    "85"
+  );
+}
+else if (title === "Peacemaker") {
+  openMovieOverlay(
+    "Peacemaker",
+    "fotot/peacemaker.jpg",
+    "A reluctant hero embarks on a mission to fight for peace, in his own extreme way.",
+    "https://www.youtube.com/watch?v=example10",
+    ["Action", "Comedy", "Adventure"],
+    "James Gunn",
+    ["James Gunn"],
+    ["John Cena", "Steve Agee", "Jennifer Holland"],
+    "7.8/10",
+    "65",
+    "65"
+  );
+}
+else if (title === "Game of Thrones") {
+  openMovieOverlay(
+    "Game of Thrones",
+    "fotot/game of thrones.jpg",
+    "Noble families vie for control of the Iron Throne in the mythical land of Westeros.",
+    "https://www.youtube.com/watch?v=example11",
+    ["Fantasy", "Drama", "Adventure"],
+    "David Benioff & D.B. Weiss",
+    ["David Benioff", "D.B. Weiss"],
+    ["Emilia Clarke", "Kit Harington", "Peter Dinklage"],
+    "9.3/10",
+    "90",
+    "90"
+  );
+}
+else if (title === "Hannibal") {
+  openMovieOverlay(
+    "Hannibal",
+    "fotot/hannibal.jpg",
+    "A brilliant psychiatrist and secret serial killer manipulates the FBI to his advantage.",
+    "https://www.youtube.com/watch?v=example12",
+    ["Crime", "Drama", "Thriller"],
+    "Bryan Fuller",
+    ["Bryan Fuller"],
+    ["Mads Mikkelsen", "Hugh Dancy", "Laurence Fishburne"],
+    "8.5/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "Stranger Things") {
+  openMovieOverlay(
+    "Stranger Things",
+    "fotot/stranger things.jpg",
+    "A group of kids uncover supernatural events in their small town, including a girl with mysterious powers.",
+    "https://www.youtube.com/watch?v=example13",
+    ["Drama", "Fantasy", "Horror", "Mystery"],
+    "The Duffer Brothers",
+    ["The Duffer Brothers"],
+    ["Millie Bobby Brown", "Finn Wolfhard", "Gaten Matarazzo"],
+    "8.9/10",
+    "75",
+    "75"
+  );
+}
+else if (title === "The Sopranos") {
+  openMovieOverlay(
+    "The Sopranos",
+    "fotot/thesopranos.jpg",
+    "Tony Soprano struggles to manage his family life with his role as a mob boss.",
+    "https://www.youtube.com/watch?v=example14",
+    ["Crime", "Drama"],
+    "David Chase",
+    ["David Chase"],
+    ["James Gandolfini", "Edie Falco", "Michael Imperioli"],
+    "9.2/10",
+    "85",
+    "85"
+  );
+}
+else if (title === "Fallout") {
+  openMovieOverlay(
+    "Fallout",
+    "fotot/fallout.jpg",
+    "In a post-apocalyptic world, survivors struggle to rebuild and survive against deadly factions.",
+    "https://www.youtube.com/watch?v=example15",
+    ["Action", "Adventure", "Sci-Fi"],
+    "Showrunner Name",
+    ["Showrunner Name"],
+    ["Actor1", "Actor2", "Actor3"],
+    "7.0/10",
+    "60",
+    "60"
+  );
+}
+else if (title === "Better Call Saul") {
+  openMovieOverlay(
+    "Better Call Saul",
+    "fotot/bcs.jpg",
+    "The journey of Jimmy McGill as he transforms into the morally challenged lawyer Saul Goodman.",
+    "https://www.youtube.com/watch?v=example16",
+    ["Crime", "Drama"],
+    "Peter Gould",
+    ["Peter Gould", "Vince Gilligan"],
+    ["Bob Odenkirk", "Jonathan Banks", "Rhea Seehorn"],
+    "8.7/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "Supernatural") {
+  openMovieOverlay(
+    "Supernatural",
+    "fotot/supernatural.jpg",
+    "Two brothers hunt demons, ghosts, and monsters across the US while confronting personal demons.",
+    "https://www.youtube.com/watch?v=example17",
+    ["Drama", "Fantasy", "Horror", "Mystery"],
+    "Eric Kripke",
+    ["Eric Kripke"],
+    ["Jared Padalecki", "Jensen Ackles", "Misha Collins"],
+    "8.4/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "The Boys") {
+  openMovieOverlay(
+    "The Boys",
+    "fotot/the boys.jpg",
+    "A group of vigilantes fight corrupt superheroes in a world where power has gone unchecked.",
+    "https://www.youtube.com/watch?v=example18",
+    ["Action", "Comedy", "Drama", "Superhero"],
+    "Eric Kripke",
+    ["Eric Kripke"],
+    ["Karl Urban", "Jack Quaid", "Antony Starr"],
+    "8.7/10",
+    "75",
+    "75"
+  );
+}
+else if (title === "The Walking Dead") {
+  openMovieOverlay(
+    "The Walking Dead",
+    "fotot/the walking dead.jpg",
+    "Survivors navigate a post-apocalyptic world overrun by zombies while facing threats from humans.",
+    "https://www.youtube.com/watch?v=example19",
+    ["Action", "Drama", "Horror", "Thriller"],
+    "Frank Darabont",
+    ["Frank Darabont"],
+    ["Andrew Lincoln", "Norman Reedus", "Melissa McBride"],
+    "8.2/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "Invincible") {
+  openMovieOverlay(
+    "Invincible",
+    "fotot/invincible.jpg",
+    "A teenager discovers he has superpowers and navigates the challenges of heroism and family.",
+    "https://www.youtube.com/watch?v=example20",
+    ["Animation", "Action", "Adventure"],
+    "Simon Racioppa",
+    ["Simon Racioppa"],
+    ["Steven Yeun", "J.K. Simmons", "Zazie Beetz"],
+    "8.8/10",
+    "75",
+    "75"
+  );
+}
+else if (title === "House MD") {
+  openMovieOverlay(
+    "House MD",
+    "fotot/housemd.jpg",
+    "Dr. Gregory House solves medical mysteries while battling his own personal demons.",
+    "https://www.youtube.com/watch?v=example21",
+    ["Drama", "Medical", "Mystery"],
+    "David Shore",
+    ["David Shore"],
+    ["Hugh Laurie", "Robert Sean Leonard", "Lisa Edelstein"],
+    "8.7/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "The Office") {
+  openMovieOverlay(
+    "The Office",
+    "fotot/theoffice.jpg",
+    "A mockumentary-style sitcom following the everyday lives of office employees at Dunder Mifflin.",
+    "https://www.youtube.com/watch?v=example22",
+    ["Comedy", "Mockumentary", "Workplace"],
+    "Greg Daniels",
+    ["Greg Daniels"],
+    ["Steve Carell", "John Krasinski", "Jenna Fischer"],
+    "8.9/10",
+    "70",
+    "70"
+  );
+}
+else if (title === "Dexter: Resurrection") {
+  openMovieOverlay(
+    "Dexter: Resurrection",
+    "fotot/dexterres.jpg",
+    "Dexter fakes his death and returns to Miami, confronting old enemies and his own dark past.",
+    "https://www.youtube.com/watch?v=example23", // replace with actual trailer URL
+    ["Crime", "Drama", "Thriller"],
+    "Showrunner Name",
+    ["Showrunner Name"],
+    ["Michael C. Hall", "Jennifer Carpenter", "David Zayas"],
+    "7.8/10",
+    "65",
+    "65"
+  );
+  }
+  else if (title === "Ozark") {
+  openMovieOverlay(
+    "Ozark",
+    "fotot/ozark.jpg",
+    "A financial advisor drags his family from Chicago to the Missouri Ozarks, where he must launder money for a Mexican cartel.",
+    "https://www.youtube.com/watch?v=5hAXVqrljbs", // official trailer
+    ["Crime", "Thriller", "Drama"],
+    "Bill Dubuque, Mark Williams",
+    ["Chris Mundy"],
+    ["Jason Bateman", "Laura Linney", "Julia Garner"],
+    "8.5/10",
+    "82",
+    "82"
+  );
+}
+
+else if (title === "The Good Doctor") {
+  openMovieOverlay(
+    "The Good Doctor",
+    "fotot/IAMASURGEON.jpg",
+    "Shaun Murphy, a young surgeon with autism and savant syndrome, navigates challenges in a prestigious hospital.",
+    "https://www.youtube.com/watch?v=fYlZDTru55g",
+    ["Drama", "Medical"],
+    "David Shore",
+    ["David Shore"],
+    ["Freddie Highmore", "Antonia Thomas", "Nicholas Gonzalez"],
+    "8.1/10",
+    "78",
+    "78"
+  );
+}
+
+else if (title === "BoJack Horseman") {
+  openMovieOverlay(
+    "BoJack Horseman",
+    "fotot/bojackhorseman.jpg",
+    "A washed-up TV star, who happens to be a horse, navigates depression, addiction, and relationships in Hollywood.",
+    "https://www.youtube.com/watch?v=i1eJMig5Ik4",
+    ["Animation", "Comedy", "Drama"],
+    "Raphael Bob-Waksberg",
+    ["Raphael Bob-Waksberg"],
+    ["Will Arnett", "Amy Sedaris", "Alison Brie"],
+    "8.8/10",
+    "91",
+    "91"
+  );
+}
+
+else if (title === "South Park") {
+  openMovieOverlay(
+    "South Park",
+    "fotot/southpark.jpg",
+    "Four boys in a Colorado town experience outrageous adventures satirizing society, culture, and politics.",
+    "https://www.youtube.com/watch?v=3nM37nF0WNM",
+    ["Animation", "Comedy", "Satire"],
+    "Trey Parker, Matt Stone",
+    ["Trey Parker", "Matt Stone"],
+    ["Trey Parker", "Matt Stone", "Isaac Hayes"],
+    "8.7/10",
+    "80",
+    "80"
+  );
+}
+
+else if (title === "Brooklyn Nine-Nine") {
+  openMovieOverlay(
+    "Brooklyn Nine-Nine",
+    "fotot/brooklyn99.jpg",
+    "A fun-loving NYPD detective and his quirky team solve crimes while balancing friendships and rivalry.",
+    "https://www.youtube.com/watch?v=sEOuJ4z5aTc",
+    ["Comedy", "Crime"],
+    "Michael Schur, Dan Goor",
+    ["Michael Schur", "Dan Goor"],
+    ["Andy Samberg", "Terry Crews", "Andre Braugher"],
+    "8.4/10",
+    "83",
+    "83"
+  );
+}
+else if (title === "JoJo's Bizarre Adventure") {
+    openMovieOverlay(
+        "JoJo's Bizarre Adventure",
+        "fotot/jjba.jpg",
+        "Follow the bizarre adventures of the Joestar family as they battle supernatural foes across generations.",
+        "https://www.youtube.com/watch?v=H7g4r1kRct8",
+        ["Action", "Adventure", "Supernatural"],
+        "David Production",
+        ["David Production"],
+        ["Jonathan Joestar", "Joseph Joestar", "Jotaro Kujo"],
+        "8.5/10",
+        "75",
+        "78"
+    );
+} else if (title === "Neon Genesis Evangelion") {
+    openMovieOverlay(
+        "Neon Genesis Evangelion",
+        "fotot/evangelion.jpg",
+        "Teenagers pilot giant mechas to fight mysterious beings known as Angels, exploring deep psychological themes.",
+        "https://www.youtube.com/watch?v=Z1G9_KZ3dUU",
+        ["Mecha", "Psychological", "Action"],
+        "Hideaki Anno",
+        ["Hideaki Anno"],
+        ["Shinji Ikari", "Rei Ayanami", "Asuka Langley"],
+        "8.6/10",
+        "80",
+        "85"
+    );
+} else if (title === "Dororo") {
+    openMovieOverlay(
+        "Dororo",
+        "fotot/dororo.jpg",
+        "A young orphaned boy teams up with a cursed samurai to reclaim stolen body parts from demons.",
+        "https://www.youtube.com/watch?v=ZyR8O0kL7o4",
+        ["Action", "Adventure", "Historical", "Supernatural"],
+        "Twin Engine",
+        ["Twin Engine"],
+        ["Hyakkimaru", "Dororo"],
+        "8.2/10",
+        "78",
+        "80"
+    );
+} else if (title === "Dragon Ball Z") {
+    openMovieOverlay(
+        "Dragon Ball Z",
+        "fotot/dbz.jpg",
+        "Goku and his friends defend Earth from powerful enemies in epic battles, transforming and growing stronger.",
+        "https://www.youtube.com/watch?v=2h5bAqfmsiU",
+        ["Action", "Adventure", "Martial Arts"],
+        "Toei Animation",
+        ["Toei Animation"],
+        ["Goku", "Vegeta", "Gohan"],
+        "9.0/10",
+        "90",
+        "92"
+    );
+} else if (title === "Dragon Ball Super") {
+    openMovieOverlay(
+        "Dragon Ball Super",
+        "fotot/dbsuper.jpg",
+        "Continuing the adventures of Goku, facing new gods, universes, and more powerful adversaries.",
+        "https://www.youtube.com/watch?v=E0RstHFcJt0",
+        ["Action", "Adventure", "Martial Arts"],
+        "Toei Animation",
+        ["Toei Animation"],
+        ["Goku", "Beerus", "Vegeta"],
+        "8.7/10",
+        "88",
+        "90"
+    );
+} else if (title === "Dragon Ball Daima") {
+    openMovieOverlay(
+        "Dragon Ball Daima",
+        "fotot/dbdaima.jpg",
+        "A legendary saga following Goku’s ultimate battles and adventures across the universe.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Martial Arts"],
+        "Toei Animation",
+        ["Toei Animation"],
+        ["Goku", "Vegeta", "Broly"],
+        "8.5/10",
+        "85",
+        "87"
+    );
+} else if (title === "The Seven Deadly Sins") {
+    openMovieOverlay(
+        "The Seven Deadly Sins",
+        "fotot/sevendeadlysins.jpg",
+        "Knights with magical powers fight to save their kingdom from corruption and evil forces.",
+        "https://www.youtube.com/watch?v=0pM7jbd6F98",
+        ["Action", "Adventure", "Fantasy"],
+        "A-1 Pictures",
+        ["A-1 Pictures"],
+        ["Meliodas", "Elizabeth", "Ban"],
+        "8.1/10",
+        "79",
+        "81"
+    );
+} else if (title === "Devilman Crybaby") {
+    openMovieOverlay(
+        "Devilman Crybaby",
+        "fotot/devilman.jpg",
+        "A teenager merges with a demon to protect humanity from other demons, in a dark psychological story.",
+        "https://www.youtube.com/watch?v=vz3kIX5GJx8",
+        ["Action", "Horror", "Psychological"],
+        "Science SARU",
+        ["Science SARU"],
+        ["Akira Fudo", "Ryo Asuka"],
+        "8.0/10",
+        "80",
+        "82"
+    );
+} else if (title === "Fullmetal Alchemist") {
+    openMovieOverlay(
+        "Fullmetal Alchemist",
+        "fotot/fma.jpg",
+        "Two brothers use alchemy in a desperate attempt to restore their bodies after a tragic failed experiment.",
+        "https://www.youtube.com/watch?v=7aGJ9xXJ38k",
+        ["Action", "Adventure", "Fantasy"],
+        "Bones",
+        ["Bones"],
+        ["Edward Elric", "Alphonse Elric", "Winry Rockbell"],
+        "8.4/10",
+        "82",
+        "84"
+    );
+} else if (title === "Fullmetal Alchemist: Brotherhood") {
+    openMovieOverlay(
+        "Fullmetal Alchemist: Brotherhood",
+        "fotot/fmab.png",
+        "A faithful adaptation of the manga, following Edward and Alphonse on their quest for the Philosopher's Stone.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Fantasy"],
+        "Bones",
+        ["Bones"],
+        ["Edward Elric", "Alphonse Elric", "Roy Mustang"],
+        "9.1/10",
+        "91",
+        "93"
+    );
+} else if (title === "Solo Leveling") {
+    openMovieOverlay(
+        "Solo Leveling",
+        "fotot/sololeveling.jpeg",
+        "A weak hunter gains the unique ability to level up infinitely, becoming humanity's strongest fighter.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Fantasy", "Adventure"],
+        "A-1 Pictures",
+        ["A-1 Pictures"],
+        ["Sung Jin-Woo", "Cha Hae-In"],
+        "8.8/10",
+        "88",
+        "90"
+    );
+} else if (title === "Naruto") {
+    openMovieOverlay(
+        "Naruto",
+        "fotot/naruto.jpg",
+        "A young ninja strives to become the strongest in his village while making friends and facing dangerous enemies.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Martial Arts"],
+        "Pierrot",
+        ["Pierrot"],
+        ["Naruto Uzumaki", "Sasuke Uchiha", "Sakura Haruno"],
+        "8.5/10",
+        "85",
+        "87"
+    );
+} else if (title === "Boruto") {
+    openMovieOverlay(
+        "Boruto",
+        "fotot/boruto.jpg",
+        "Follow the adventures of Naruto's son as he trains to become a great ninja while facing new threats.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Martial Arts"],
+        "Pierrot",
+        ["Pierrot"],
+        ["Boruto Uzumaki", "Sarada Uchiha", "Mitsuki"],
+        "7.5/10",
+        "75",
+        "77"
+    );
+} else if (title === "Afro Samurai") {
+    openMovieOverlay(
+        "Afro Samurai",
+        "fotot/afro.jpg",
+        "A samurai seeks revenge against the man who killed his father in a violent, stylized world.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Martial Arts"],
+        "Gonzo",
+        ["Gonzo"],
+        ["Afro", "Ninja Ninja", "Father"],
+        "8.0/10",
+        "80",
+        "82"
+    );
+} else if (title === "Jujutsu Kaisen") {
+    openMovieOverlay(
+        "Jujutsu Kaisen",
+        "fotot/jujutsu.jpg",
+        "A high school student gains cursed powers to battle monsters and protect humanity.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Supernatural"],
+        "MAPPA",
+        ["MAPPA"],
+        ["Yuji Itadori", "Megumi Fushiguro", "Nobara Kugisaki"],
+        "8.9/10",
+        "89",
+        "91"
+    );
+} else if (title === "Cyberpunk: Edgerunners") {
+    openMovieOverlay(
+        "Cyberpunk: Edgerunners",
+        "fotot/cyberpunkedgerunners.jpg",
+        "A street kid becomes a mercenary in a high-tech, dangerous city filled with cybernetic enhancements.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Sci-Fi", "Cyberpunk"],
+        "Trigger",
+        ["Trigger"],
+        ["David Martinez", "Lucy"],
+        "8.7/10",
+        "87",
+        "89"
+    );
+} else if (title === "Vinland Saga") {
+    openMovieOverlay(
+        "Vinland Saga",
+        "fotot/vinland.jpg",
+        "A young Viking seeks revenge while learning about honor, war, and the true meaning of strength.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Historical"],
+        "WIT Studio",
+        ["WIT Studio"],
+        ["Thorfinn", "Askeladd", "Canute"],
+        "8.8/10",
+        "88",
+        "90"
+    );
+} else if (title === "Berserk") {
+    openMovieOverlay(
+        "Berserk",
+        "fotot/berserk.jpg",
+        "Guts battles through a dark medieval world filled with demons, betrayal, and tragedy.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Dark Fantasy", "Adventure"],
+        "Madhouse",
+        ["Madhouse"],
+        ["Guts", "Griffith", "Casca"],
+        "8.9/10",
+        "89",
+        "91"
+    );
+} else if (title === "Demon Slayer") {
+    openMovieOverlay(
+        "Demon Slayer",
+        "fotot/demonslayer.jpg",
+        "A young boy becomes a demon slayer to save his sister and avenge his family.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Fantasy"],
+        "Ufotable",
+        ["Ufotable"],
+        ["Tanjiro Kamado", "Nezuko Kamado", "Zenitsu Agatsuma"],
+        "9.0/10",
+        "90",
+        "92"
+    );
+} else if (title === "Frieren") {
+    openMovieOverlay(
+        "Frieren",
+        "fotot/frieren.jpg",
+        "An elven mage reflects on her long life and the fleeting nature of human friendships.",
+        "https://www.youtube.com/watch?v=example",
+        ["Adventure", "Fantasy", "Drama"],
+        "Studio DEEN",
+        ["Studio DEEN"],
+        ["Frieren", "Elely", "Fern"],
+        "8.5/10",
+        "85",
+        "87"
+    );
+} else if (title === "Hunter x Hunter") {
+    openMovieOverlay(
+        "Hunter x Hunter",
+        "fotot/hunterxhunter.jpg",
+        "Gon Freecss embarks on a journey to become a Hunter and find his missing father.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Fantasy"],
+        "Madhouse",
+        ["Madhouse"],
+        ["Gon", "Killua", "Kurapika"],
+        "9.0/10",
+        "90",
+        "92"
+    );
+} else if (title === "Bleach") {
+    openMovieOverlay(
+        "Bleach",
+        "fotot/bleach.jpg",
+        "Ichigo Kurosaki gains the power of a Soul Reaper and battles evil spirits threatening the world.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Supernatural"],
+        "Pierrot",
+        ["Pierrot"],
+        ["Ichigo Kurosaki", "Rukia Kuchiki", "Renji Abarai"],
+        "8.2/10",
+        "82",
+        "84"
+    );
+} else if (title === "Monster") {
+    openMovieOverlay(
+        "Monster",
+        "fotot/monster.jpg",
+        "A doctor becomes involved in a dark conspiracy after saving a young boy who grows into a serial killer.",
+        "https://www.youtube.com/watch?v=example",
+        ["Mystery", "Thriller", "Psychological"],
+        "Madhouse",
+        ["Madhouse"],
+        ["Dr. Kenzo Tenma", "Johan Liebert"],
+        "8.9/10",
+        "89",
+        "91"
+    );
+} else if (title === "One Punch Man") {
+    openMovieOverlay(
+        "One Punch Man",
+        "fotot/onepunchman.jpg",
+        "Saitama is so strong he can defeat any enemy with one punch, struggling with boredom and existential questions.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Comedy", "Superhero"],
+        "Madhouse",
+        ["Madhouse"],
+        ["Saitama", "Genos", "Speed-o'-Sound Sonic"],
+        "8.8/10",
+        "88",
+        "90"
+    );
+} else if (title === "Cowboy Bebop") {
+    openMovieOverlay(
+        "Cowboy Bebop",
+        "fotot/cowboybebop.jpg",
+        "A crew of bounty hunters travels through space while facing their pasts and existential dilemmas.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Adventure", "Sci-Fi"],
+        "Sunrise",
+        ["Sunrise"],
+        ["Spike Spiegel", "Jet Black", "Faye Valentine"],
+        "9.0/10",
+        "90",
+        "92"
+    );
+} else if (title === "Mob Psycho 100") {
+    openMovieOverlay(
+        "Mob Psycho 100",
+        "fotot/mobpsycho100.jpg",
+        "A psychic middle schooler tries to live a normal life while managing his immense powers.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Comedy", "Supernatural"],
+        "Bones",
+        ["Bones"],
+        ["Shigeo 'Mob' Kageyama", "Reigen Arataka"],
+        "8.7/10",
+        "87",
+        "89"
+    );
+} else if (title === "Tokyo Ghoul") {
+    openMovieOverlay(
+        "Tokyo Ghoul",
+        "fotot/tokyoghoul.jpg",
+        "A college student becomes a half-ghoul after a near-fatal encounter and struggles with his new identity.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Horror", "Supernatural"],
+        "Pierrot",
+        ["Pierrot"],
+        ["Ken Kaneki", "Touka Kirishima"],
+        "8.0/10",
+        "80",
+        "82"
+    );
+} else if (title === "Hellsing") {
+    openMovieOverlay(
+        "Hellsing",
+        "fotot/hellsing.jpg",
+        "Vampire hunters combat supernatural forces threatening England, led by the immortal vampire Alucard.",
+        "https://www.youtube.com/watch?v=example",
+        ["Action", "Horror", "Supernatural"],
+        "Gonzo",
+        ["Gonzo"],
+        ["Alucard", "Integra Hellsing", "Seras Victoria"],
+        "8.3/10",
+        "83",
+        "85"
+    );
+}
+else if (title === "Death Note") {
+  openMovieOverlay(
+    "Death Note",
+    "fotot/deathnote.jpg",
+    "A high school student discovers a mysterious notebook that grants him the power to kill anyone whose name he writes in it, leading to a dangerous game of wits with a brilliant detective.",
+    "https://www.youtube.com/watch?v=NlJZ-YgAt-c", // replace with correct trailer link if needed
+    ["Psychological Thriller", "Mystery", "Supernatural"],
+    "Tetsurō Araki",
+    ["Tsugumi Ohba", "Takeshi Obata"],
+    ["Mamoru Miyano", "Kappei Yamaguchi", "Aya Hirano"],
+    "9.0/10",
+    "100",
+    "37"
+  );
+}
+else if (title === "Attack on Titan") {
+  openMovieOverlay(
+    "Attack on Titan",
+    "fotot/aot.jpg",
+    "In a world besieged by man-eating giants known as Titans, humanity’s last remnants fight for survival within walled cities, while uncovering dark secrets about their enemies and themselves.",
+    "https://www.youtube.com/watch?v=MGRm4IzK1SQ", // official trailer link
+    ["Action", "Dark Fantasy", "Mystery", "Drama"],
+    "Tetsurō Araki",
+    ["Hajime Isayama"],
+    ["Yuki Kaji", "Marina Inoue", "Yui Ishikawa"],
+    "9.0/10",
+    "100",
+    "75"
+  );
+}
+
+
+    else {
+      openMovieOverlay(title, src, "Movie description goes here.");
+    }
+  });
+});
+
+
+
+  
+</script>
+
+  <!-- Your JS code here -->
+  <script>
+  // Get references
+const categoryDropdown = document.getElementById('searchCategoryDropdown');
+const searchInput = document.getElementById('navbarSearchInput');
+const searchButton = document.querySelector('.searchbar-btn');
+let selectedCategory = "All";
+
+// Category dropdown logic
+document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    categoryDropdown.textContent = this.textContent;
+    selectedCategory = this.getAttribute('data-value');
+    filterCards(); // Apply filtering after selecting category
+  });
+});
+
+// Dynamically add genre items (from the genre rows) and a Watch Later item to the same dropdown
+(function addGenresToCategoryDropdown() {
+  const menu = document.querySelector('#searchCategoryDropdown + .dropdown-menu');
+  if (!menu) return;
+
+  // divider and header
+  const divider = document.createElement('li');
+  divider.innerHTML = '<hr class="dropdown-divider">';
+  menu.appendChild(divider);
+
+  const headerLi = document.createElement('li');
+  headerLi.innerHTML = '<h6 class="dropdown-header">Genres</h6>';
+  menu.appendChild(headerLi);
+
+  // find genres by reading headings inside #genreRowsContainer
+  const genreContainer = document.getElementById('genreRowsContainer');
+  const genres = [];
+  if (genreContainer) {
+    genreContainer.querySelectorAll('h3').forEach(h => {
+      const txt = (h.textContent || '').trim();
+      if (txt) genres.push(txt);
+    });
+  }
+
+  // helper to normalize into id key used by genre containers
+  function normalizeKey(name) {
+    return (name || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  genres.forEach(g => {
+    const a = document.createElement('a');
+    a.className = 'dropdown-item';
+    a.href = '#';
+    a.textContent = g;
+    a.setAttribute('data-value', 'genre:' + normalizeKey(g));
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      categoryDropdown.textContent = this.textContent;
+      selectedCategory = this.getAttribute('data-value');
+      filterCards();
+    });
+    const li = document.createElement('li');
+    li.appendChild(a);
+    menu.appendChild(li);
+  });
+
+  // Watch Later item (hidden by default)
+  const wlLi = document.createElement('li');
+  const wlA = document.createElement('a');
+  wlA.className = 'dropdown-item';
+  wlA.href = '#';
+  wlA.id = 'dropdownWatchLaterItem';
+  wlA.setAttribute('data-value', 'watchlater');
+  wlA.textContent = 'Watch Later';
+  wlA.style.display = 'none'; // hidden until items exist
+  wlA.addEventListener('click', function(e) {
+    e.preventDefault();
+    categoryDropdown.textContent = this.textContent;
+    selectedCategory = this.getAttribute('data-value');
+    filterCards();
+  });
+  wlLi.appendChild(wlA);
+  menu.appendChild(wlLi);
+
+  // expose helper to toggle visibility
+  window._toggleWatchLaterDropdown = function(visible) {
+    const item = document.getElementById('dropdownWatchLaterItem');
+    if (!item) return;
+    item.style.display = visible ? '' : 'none';
+  };
+})();
+
+// Search function
+function filterCards() {
+  const query = searchInput.value.toLowerCase();
+  const allCards = Array.from(document.querySelectorAll('.card'));
+
+  // helper to hide all then selectively show
+  function showCard(c) { c.style.display = ''; }
+  function hideCard(c) { c.style.display = 'none'; }
+
+  // default: show/hide based on category or special values
+  if (selectedCategory && selectedCategory.startsWith('genre:')) {
+    // show only cards that appear in the corresponding genre container
+    const genreKey = selectedCategory.split(':')[1];
+    const container = document.getElementById('genre-' + genreKey + '-posters');
+    const titles = new Set();
+    if (container) {
+      container.querySelectorAll('.card[data-title]').forEach(c => titles.add((c.getAttribute('data-title') || '').toLowerCase()));
+    }
+    allCards.forEach(card => {
+      const title = (card.getAttribute('data-title') || (card.querySelector('.card-title') && card.querySelector('.card-title').textContent) || '').toLowerCase();
+      const matchesQuery = title.includes(query);
+      if (titles.size > 0 && titles.has(title) && matchesQuery) showCard(card); else hideCard(card);
+    });
+    return;
+  }
+
+  if (selectedCategory === 'watchlater') {
+    // show only cards that live inside #watchLaterPosters
+    const wl = document.getElementById('watchLaterPosters');
+    const titles = new Set();
+    if (wl) {
+      wl.querySelectorAll('.card[data-title]').forEach(c => titles.add((c.getAttribute('data-title') || '').toLowerCase()));
+    }
+    allCards.forEach(card => {
+      const title = (card.getAttribute('data-title') || (card.querySelector('.card-title') && card.querySelector('.card-title').textContent) || '').toLowerCase();
+      const matchesQuery = title.includes(query);
+      if (titles.size > 0 && titles.has(title) && matchesQuery) showCard(card); else hideCard(card);
+    });
+    return;
+  }
+
+  // fallback: regular category filter (movie / tvshow / anime / All)
+  allCards.forEach(card => {
+    const title = (card.querySelector('.card-title') && card.querySelector('.card-title').textContent || '').toLowerCase();
+    const category = card.getAttribute('data-category'); // make sure each card has data-category
+    const matchesCategory = selectedCategory === "All" || category === selectedCategory;
+    const matchesQuery = title.includes(query);
+    if (matchesCategory && matchesQuery) showCard(card); else hideCard(card);
+  });
+}
+
+// Trigger search on button click
+searchButton.addEventListener('click', function(e) {
+  e.preventDefault();
+  filterCards();
+});
+
+// Optional: search while typing
+searchInput.addEventListener('keyup', filterCards);
+
+</script>
+
+</body>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  // Convert every .poster-row into a Swiper instance on load
+  // and observe dynamic additions (Watch Later, genre rows)
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      var rows = Array.from(document.querySelectorAll('.poster-row'));
+      if (!rows.length) return;
+
+      // Track processed cards to avoid double-processing during moves
+      var processed = new WeakSet();
+
+      rows.forEach(function (posterRow, idx) {
+        // build swiper structure
+        var wrapper = document.createElement('div');
+        var swiperClass = 'mySwiper-' + idx;
+        wrapper.className = 'swiper ' + swiperClass;
+        var inner = document.createElement('div');
+        inner.className = 'swiper-wrapper';
+
+        var pagination = document.createElement('div');
+        pagination.className = 'swiper-pagination';
+
+        // navigation buttons (per-row) so each row has independent controls
+        var prevBtn = document.createElement('div');
+        prevBtn.className = 'swiper-button-prev';
+        var nextBtn = document.createElement('div');
+        nextBtn.className = 'swiper-button-next';
+
+        wrapper.appendChild(inner);
+        wrapper.appendChild(pagination);
+        wrapper.appendChild(prevBtn);
+        wrapper.appendChild(nextBtn);
+
+        // move any existing direct .card children into slides
+        var cards = Array.from(posterRow.querySelectorAll(':scope > .card'));
+        cards.forEach(function (card) {
+          var slide = document.createElement('div');
+          slide.className = 'swiper-slide';
+          slide.appendChild(card);
+          inner.appendChild(slide);
+          processed.add(card);
+        });
+
+        // replace posterRow contents with swiper wrapper (keep wrapper element as container)
+        posterRow.innerHTML = '';
+        posterRow.classList.remove('d-flex', 'flex-row', 'align-items-start');
+        posterRow.style.overflow = 'visible';
+        posterRow.appendChild(wrapper);
+
+        // initialize Swiper on the wrapper element with coverflow + looping for cylinder effect
+        var swiper = new Swiper(wrapper, {
+          effect: 'coverflow',
+          loop: true,
+          slidesPerView: 5,
+          slidesPerGroup: 1,
+          spaceBetween: 24,
+          centeredSlides: true,
+          slideToClickedSlide: true,
+          watchOverflow: true,
+          grabCursor: true,
+          coverflowEffect: {
+            rotate: 18,      // tilt angle of side slides
+            stretch: -20,    // bring slides a bit closer for overlapping look
+            depth: 160,      // 3D depth
+            modifier: 1.1,
+            slideShadows: false,
+          },
+          // pagination + navigation
+          pagination: { el: pagination, clickable: true },
+          navigation: { nextEl: nextBtn, prevEl: prevBtn },
+          keyboard: { enabled: true },
+          breakpoints: {
+            320: { slidesPerView: 1, spaceBetween: 10, centeredSlides: true },
+            600: { slidesPerView: 2, spaceBetween: 16, centeredSlides: true },
+            900: { slidesPerView: 3, spaceBetween: 18, centeredSlides: true },
+            1100: { slidesPerView: 4, spaceBetween: 20, centeredSlides: true },
+            1400: { slidesPerView: 5, spaceBetween: 24, centeredSlides: true }
+          }
+        });
+
+        // MutationObserver: when new .card elements are appended to the original posterRow,
+        // move them into the swiper as slides so dynamic additions (Watch Later, genres)
+        // are reflected automatically.
+        var mo = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            m.addedNodes && m.addedNodes.forEach(function (node) {
+              if (node.nodeType !== 1) return; // element only
+              var addedCards = [];
+              if (node.classList && node.classList.contains('card')) addedCards.push(node);
+              // if a wrapper was added containing cards, find them
+              addedCards = addedCards.concat(Array.from(node.querySelectorAll ? node.querySelectorAll('.card') : []));
+
+              addedCards.forEach(function (card) {
+                if (processed.has(card)) return;
+                processed.add(card);
+                var slide = document.createElement('div');
+                slide.className = 'swiper-slide';
+                slide.appendChild(card);
+                // append slide to swiper wrapper and update swiper
+                inner.appendChild(slide);
+                try { swiper.update(); } catch (e) { /* ignore */ }
+              });
+            });
+          });
+        });
+
+        mo.observe(posterRow, { childList: true, subtree: true });
+      });
+    } catch (e) {
+      console.error('Swiper conversion error:', e);
+    }
+  });
+</script>
+
+<script>
+  // Watch Later logic
+  const watchLaterRow = document.getElementById('watchLaterRow');
+  const watchLaterPosters = document.getElementById('watchLaterPosters');
+
+  // Listen for all save-btn clicks (event delegation for dynamic safety)
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('save-btn')) {
+      // Find the card
+      const card = e.target.closest('.card');
+      if (!card) return;
+      // Check if already in Watch Later (by data-title or img src)
+      const img = card.querySelector('img');
+      let unique = img ? img.src : card.getAttribute('data-title') || card.innerHTML;
+      let already = false;
+      watchLaterPosters.querySelectorAll('.card').forEach(c => {
+        const cimg = c.querySelector('img');
+        let cid = cimg ? cimg.src : c.getAttribute('data-title') || c.innerHTML;
+        if (cid === unique) already = true;
+      });
+      if (already) return;
+      // Clone the card (deep clone)
+      const clone = card.cloneNode(true);
+
+      // Remove inline onclick from the cloned save button so we can set remove behavior
+      const cloneSaveBtn = clone.querySelector('.save-btn');
+      if (cloneSaveBtn) {
+        cloneSaveBtn.removeAttribute('onclick');
+      }
+
+      // Wire the cloned poster image to open the same overlay as the original:
+      const originalImg = card.querySelector('.card-img-top, img');
+      const cloneImg = clone.querySelector('.card-img-top, img');
+      if (cloneImg && originalImg) {
+        cloneImg.style.cursor = 'pointer';
+        cloneImg.addEventListener('click', function() {
+          originalImg.click();
+        });
+      }
+
+      // Make the cloned save button an "remove" (X) button that removes the card from Watch Later
+      if (cloneSaveBtn) {
+        cloneSaveBtn.textContent = '×'; // X symbol
+        try {
+          cloneSaveBtn.title = (window.__t ? window.__t('Remove from Watch Later') : 'Remove from Watch Later');
+        } catch (e) {
+          cloneSaveBtn.title = 'Remove from Watch Later';
+        }
+        cloneSaveBtn.style.opacity = '0.95';
+        cloneSaveBtn.style.cursor = 'pointer';
+  // Keep the visual `.save-btn` class so the button looks identical to originals,
+  // but also mark it with `.remove-btn` so remove behavior is detected.
+  if (!cloneSaveBtn.classList.contains('save-btn')) cloneSaveBtn.classList.add('save-btn');
+  if (!cloneSaveBtn.classList.contains('remove-btn')) cloneSaveBtn.classList.add('remove-btn');
+        // Prevent clicks on the remove button from bubbling to the poster click
+        cloneSaveBtn.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          // remove the cloned card
+          clone.remove();
+          // hide the Watch Later row if empty
+          if (!watchLaterPosters.querySelector('.card')) {
+            watchLaterRow.style.display = 'none';
+            try { if (typeof window._toggleWatchLaterDropdown === 'function') window._toggleWatchLaterDropdown(false); } catch(e){}
+          }
+        });
+      }
+
+      // Add to Watch Later row
+      watchLaterPosters.appendChild(clone);
+      // Show the row
+      watchLaterRow.style.display = '';
+      try { if (typeof window._toggleWatchLaterDropdown === 'function') window._toggleWatchLaterDropdown(true); } catch(e){}
+    }
+  });
+
+
+  // Cleanup: remove inline onclicks from any existing .save-btn so delegation and translated alerts handle them
+  (function cleanupSaveBtnOnclicks(){
+    try {
+      document.querySelectorAll('.save-btn').forEach(btn => {
+        if (btn.getAttribute && btn.getAttribute('onclick')) btn.removeAttribute('onclick');
+      });
+      // also sanitize any save buttons created later via innerHTML in createGenreCard - the code already uses plain buttons there
+    } catch(e) { /* ignore */ }
+  })();
+</script>
+<script>
+(function () {
+  // normalize a genre string into a simple key we use for container IDs
+  function normalizeGenre(g) {
+    return (g || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  // create & append a small poster card into a genre container
+  function createGenreCard(opts) {
+    const { title, posterSrc, trailerSrc, description, genres, director, writers, stars, imdb, popularity, metascore, container } = opts;
+
+    // avoid duplicates by title
+    if ([...container.querySelectorAll('.card')].some(c => c.getAttribute('data-title') === title)) return;
+
+    const card = document.createElement('div');
+    card.className = 'card bg-dark text-white';
+    card.setAttribute('data-title', title || '');
+    card.style.width = '14rem';
+    card.style.borderRadius = '12px';
+    card.style.overflow = 'hidden';
+    card.style.flex = '0 0 auto';
+    card.innerHTML = `
+      <div style="position: relative;">
+        <img src="${posterSrc}" class="card-img-top" style="border-radius: 0; width: 100%; cursor: pointer;">
+        <button class="save-btn">+</button>
+      </div>
+      <div class="card-body" style="background: #232526; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; padding: 0.75rem 1rem;">
+        <h5 class="card-title mb-0">${title}</h5>
+      </div>
+    `;
+
+    // clicking poster should open the same overlay info
+    const img = card.querySelector('img');
+    img.addEventListener('click', function () {
+      // call the global overlay function with the same metadata
+      if (typeof openMovieOverlay === 'function') {
+        openMovieOverlay(title, posterSrc, description, trailerSrc, genres, director, writers, stars, imdb, popularity, metascore);
+      }
+    });
+
+    container.appendChild(card);
+  }
+
+  // add movie poster into all matching genre rows
+  window.addToGenreRows = function (title, posterSrc, genres, trailerSrc, description, director, writers, stars, imdb, popularity, metascore) {
+    if (!Array.isArray(genres) || !title) return;
+    genres.forEach(g => {
+      const key = normalizeGenre(g);
+      // map common variants for sci-fi
+      const idKey = (key === 'scifi' || key === 'scifi') ? 'scifi' : key;
+      const container = document.getElementById('genre-' + idKey + '-posters');
+      if (!container) return;
+      createGenreCard({ title, posterSrc, trailerSrc, description, genres, director, writers, stars, imdb, popularity, metascore, container });
+    });
+  };
+
+  // wrap/override openMovieOverlay to also populate genre rows when overlay opens
+  const originalOpen = window.openMovieOverlay;
+  window.openMovieOverlay = function () {
+    // call original implementation first so UI updates normally
+    if (typeof originalOpen === 'function') {
+      originalOpen.apply(this, arguments);
+    }
+    try {
+      // arguments expected: title, posterSrc, description, trailerSrc, genres, director, writers, stars, imdb, popularity, metascore
+      const title = arguments[0];
+      const posterSrc = arguments[1];
+      const description = arguments[2];
+      const trailerSrc = arguments[3];
+      const genres = arguments[4];
+      const director = arguments[5];
+      const writers = arguments[6];
+      const stars = arguments[7];
+      const imdb = arguments[8];
+      const popularity = arguments[9];
+      const metascore = arguments[10];
+      // populate genre rows (no duplicates)
+      window.addToGenreRows(title, posterSrc, genres, trailerSrc, description, director, writers, stars, imdb, popularity, metascore);
+    } catch (e) {
+      // silent fail to avoid breaking overlay
+      console.error(e);
+    }
+  };
+})();
+</script>
+
+<!-- Populate genre rows after genre helper is defined and handlers are bound -->
+<script>
+  (function populateGenresOnLoad() {
+    function run() {
+      if (typeof window.openMovieOverlay !== 'function') return;
+      var original = window.openMovieOverlay;
+
+      // stub that only calls addToGenreRows (map overlay args -> addToGenreRows args)
+      window.openMovieOverlay = function () {
+        try {
+          if (typeof window.addToGenreRows === 'function') {
+            // overlay args: title, posterSrc, description, trailerSrc, genres, director, writers, stars, imdb, popularity, metascore
+            var title = arguments[0];
+            var posterSrc = arguments[1];
+            var description = arguments[2];
+            var trailerSrc = arguments[3];
+            var genres = arguments[4];
+            var director = arguments[5];
+            var writers = arguments[6];
+            var stars = arguments[7];
+            var imdb = arguments[8];
+            var popularity = arguments[9];
+            var metascore = arguments[10];
+            // addToGenreRows expects: title, posterSrc, genres, trailerSrc, description, director, writers, stars, imdb, popularity, metascore
+            window.addToGenreRows(title, posterSrc, genres, trailerSrc, description, director, writers, stars, imdb, popularity, metascore);
+          }
+        } catch (e) { /* ignore */ }
+      };
+
+      // trigger poster click handlers (which should now be bound)
+      var posters = document.querySelectorAll('.card-img-top');
+      posters.forEach(function (img) {
+        try { img.click(); } catch (e) { /* ignore */ }
+      });
+
+      // restore original
+      window.openMovieOverlay = original;
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') run();
+    else document.addEventListener('DOMContentLoaded', run);
+  })();
+</script>
+
+<!-- i18n -->
+<script src="js/translations.js"></script>
+<script src="js/i18n.js"></script>

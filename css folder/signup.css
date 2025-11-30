@@ -39,6 +39,30 @@
   z-index: 2;
 }
 
+/* Make the form scrollable when content overflows the viewport
+   and style the scrollbar to match the design in the second image. */
+.signup-form {
+  padding: 1.25rem; /* ensure internal spacing (keeps bootstrap `p-4` compatible) */
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #f5c518 transparent; /* Firefox thumb + track */
+}
+
+/* WebKit scrollbar styling (Chrome, Edge, Safari) */
+.signup-form::-webkit-scrollbar {
+  width: 10px;
+}
+.signup-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+.signup-form::-webkit-scrollbar-thumb {
+  background-color: #f5c518; /* yellow thumb */
+  border-radius: 8px;
+  border: 2px solid rgba(0,0,0,0.6); /* slight border so thumb stands out on black */
+}
+
 /* form text, headings and labels */
 .signup-form h3,
 .signup-form label,

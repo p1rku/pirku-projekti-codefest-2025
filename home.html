@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css folder/home.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="fotot/">
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
@@ -119,6 +118,14 @@
     </div>
   </div>
 </nav>
+
+<!-- ALL Section: a Swiper-enabled row that contains every poster (movies, tvshows, anime) -->
+<div class="d-flex align-items-center px-4 pt-4 pb-2">
+  <h3 class="mb-0" style="font-weight: bold;">All</h3>
+  <span style="font-size: 2rem; color: #232526; margin-left: 8px;">&#8250;</span>
+</div>
+<!-- initially empty: will be populated on DOMContentLoaded by cloning all .card elements -->
+<div id="allPosters" class="poster-row d-flex flex-row align-items-start ps-4 pb-4" style="overflow-x: auto; gap: 1rem;"></div>
 
 <!-- Movie Card Section -->
 <div class="d-flex align-items-center px-4 pt-4 pb-2">
@@ -1224,15 +1231,21 @@
     // current language (persisted in localStorage)
     const stored = localStorage.getItem('siteLang');
     let currentLang = stored || 'en';
+    // dropdown elements
+    const langBtn = document.getElementById('langDropdownBtn');
+    const langMenu = document.getElementById('langDropdownMenu');
 
     function t(key) {
       if (!key) return '';
-      const map = I18N[currentLang] || I18N['en'];
+      const dict = (window.I18N || window.TRANSLATIONS || {});
+      const map = (dict[currentLang] || dict['en'] || {});
       return map[key] !== undefined ? map[key] : key;
     }
 
     // Apply translations to known UI elements
     function applyTranslations() {
+      // ensure MOVIE_TITLES map exists to avoid errors when translations file not loaded
+      try { if (typeof MOVIE_TITLES === 'undefined') window.MOVIE_TITLES = {}; } catch(e) { window.MOVIE_TITLES = {}; }
       // headers (Movies / TV Shows / Anime / Watch Later)
       document.querySelectorAll('h3').forEach(h => {
         const txt = (h.textContent || '').trim();
@@ -1277,7 +1290,7 @@
 
       // Translate visible card titles (movie/show/anime names) using MOVIE_TITLES map
       // ensure every movie has a mapping for every supported language (fallback to English)
-      const supportedLangs = Object.keys(I18N || {});
+      const supportedLangs = Object.keys((window.I18N || window.TRANSLATIONS || {}));
       document.querySelectorAll('.card[data-title]').forEach(card => {
         const eng = (card.getAttribute('data-title') || '').toString();
         if (!eng) return;
@@ -1300,7 +1313,24 @@
 
     // set language button label
     function setLangBtnLabel(code) {
-      langBtn.textContent = (code || '').toUpperCase().substring(0,2);
+      if (langBtn) langBtn.textContent = (code || '').toUpperCase().substring(0,2);
+    }
+
+    // set language and close the dropdown (single helper for click handlers)
+    function setLanguageAndClose(code) {
+      if (!code) return;
+      currentLang = code;
+      try { localStorage.setItem('siteLang', currentLang); } catch(e) {}
+      setLangBtnLabel(currentLang);
+      try { applyTranslations(); } catch(e) {}
+      try {
+        if (langMenu) langMenu.style.display = 'none';
+        if (langMenu) langMenu.classList.remove('show');
+        if (langBtn) {
+          langBtn.setAttribute('aria-expanded', 'false');
+          langBtn.classList.remove('show');
+        }
+      } catch(e) { /* ignore */ }
     }
 
     // wire the menu toggle and selection behavior
@@ -1317,20 +1347,18 @@
       langMenu.querySelectorAll('.dropdown-item').forEach(item => {
         item.addEventListener('click', function(ev) {
           ev.preventDefault();
-          // allow menu item to indicate language code via data-lang or parse from text
-          const code = this.getAttribute('data-lang') || (this.dataset && this.dataset.lang) || null;
-          if (code) currentLang = code;
-          else {
-            // fallback: pick by language name present in text
-            const txt = (this.textContent || '').toLowerCase();
-            if (txt.includes('english')) currentLang = 'en';
-            else if (txt.includes('es') || txt.includes('español') || txt.includes('spanish')) currentLang = 'es';
-            else currentLang = 'en';
+          // prevent the document click listener from toggling the menu back open
+          ev.stopPropagation();
+          // pick language code from data-lang or infer from text
+          const codeAttr = this.getAttribute('data-lang') || (this.dataset && this.dataset.lang) || null;
+          if (codeAttr) {
+            setLanguageAndClose(codeAttr);
+            return;
           }
-          localStorage.setItem('siteLang', currentLang);
-          setLangBtnLabel(currentLang);
-          applyTranslations();
-          langMenu.style.display = 'none';
+          const txt = (this.textContent || '').toLowerCase();
+          if (txt.includes('english')) setLanguageAndClose('en');
+          else if (txt.includes('es') || txt.includes('español') || txt.includes('spanish')) setLanguageAndClose('es');
+          else setLanguageAndClose('en');
         });
       });
     }
@@ -1525,6 +1553,14 @@
     overlay.classList.remove('show');
     // clear iframe src to stop playback
     if (trailerIframe) trailerIframe.src = '';
+
+    // if mobile DOM rearrangement was applied, restore original popup body
+    try {
+      if (overlay && typeof overlay._mobileRestore === 'function') {
+        overlay._mobileRestore();
+      }
+    } catch (e) { /* ignore */ }
+
     const poster = document.getElementById('moviePosterImg');
     if (poster) poster.src = '';
     const content = document.getElementById('moviePopupContent');
@@ -1543,6 +1579,15 @@
     // return focus to main content (try the search input)
     const searchInput = document.getElementById('navbarSearchInput');
     if (searchInput) searchInput.focus();
+
+    // Refresh all Swiper instances to ensure layout and transforms are recalculated
+    try {
+      if (window.__swipers && Array.isArray(window.__swipers)) {
+        window.__swipers.forEach(function(s) {
+          try { if (s && typeof s.update === 'function') s.update(); } catch (e) {}
+        });
+      }
+    } catch (e) { /* ignore */ }
   }
 </script>
 
@@ -2935,6 +2980,8 @@ const categoryDropdown = document.getElementById('searchCategoryDropdown');
 const searchInput = document.getElementById('navbarSearchInput');
 const searchButton = document.querySelector('.searchbar-btn');
 let selectedCategory = "All";
+// track last applied category so switching between non-All categories resets sections
+window.__lastSelectedCategory = selectedCategory;
 
 // Category dropdown logic
 document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-item').forEach(item => {
@@ -2942,6 +2989,12 @@ document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-it
     e.preventDefault();
     categoryDropdown.textContent = this.textContent;
     selectedCategory = this.getAttribute('data-value');
+    try { console.debug('[category click] text="' + this.textContent + '", data-value="' + selectedCategory + '"'); } catch(e) {}
+    // If user selected All, refresh the page to restore original state
+    if ((selectedCategory || '').toString().toLowerCase() === 'all') {
+      try { window.location.reload(); } catch (err) { /* fallback */ }
+      return;
+    }
     filterCards(); // Apply filtering after selecting category
   });
 });
@@ -2985,6 +3038,7 @@ document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-it
       e.preventDefault();
       categoryDropdown.textContent = this.textContent;
       selectedCategory = this.getAttribute('data-value');
+      if ((selectedCategory || '').toLowerCase() === 'all') { try { window.location.reload(); } catch(e){}; return; }
       filterCards();
     });
     const li = document.createElement('li');
@@ -3005,6 +3059,7 @@ document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-it
     e.preventDefault();
     categoryDropdown.textContent = this.textContent;
     selectedCategory = this.getAttribute('data-value');
+    if ((selectedCategory || '').toLowerCase() === 'all') { try { window.location.reload(); } catch(e){}; return; }
     filterCards();
   });
   wlLi.appendChild(wlA);
@@ -3022,15 +3077,138 @@ document.querySelectorAll('#searchCategoryDropdown + .dropdown-menu .dropdown-it
 function filterCards() {
   const query = searchInput.value.toLowerCase();
   const allCards = Array.from(document.querySelectorAll('.card'));
+  // normalize selected category for comparisons (preserve original in variable)
+  const catNorm = (selectedCategory || '').toString().toLowerCase();
+  try { console.debug('[filterCards] selectedCategory=', selectedCategory, 'catNorm=', catNorm, 'query=', query); } catch(e) {}
+
+  // If a category is selected (not All), detach all non-matching sections
+  // and move the matching section to just after the <nav>. When switching
+  // back to "All" we restore previously detached sections. Also handle
+  // switching between non-All categories by restoring prior detaches first.
+  try {
+    // helper to restore stored sections if any
+    function restoreStoredSections() {
+      if (window.__storedSections && window.__storedSections.length) {
+        // restore in original order using placeholders to preserve original positions
+        window.__storedSections.forEach(function(item) {
+          try {
+            if (item.placeholder && item.placeholder.parentNode === item.parent) {
+              item.parent.insertBefore(item.node, item.placeholder);
+              try { item.parent.removeChild(item.placeholder); } catch(e) { /* ignore */ }
+            } else {
+              // fallback: append to parent if placeholder is missing
+              item.parent.appendChild(item.node);
+            }
+          } catch (e) { try { item.parent.appendChild(item.node); } catch(e){} }
+        });
+        window.__storedSections = [];
+        // update swipers after restore
+        setTimeout(function(){ try { if (window.__swipers) window.__swipers.forEach(s => s.update && s.update()); } catch(e){} }, 50);
+      }
+    }
+
+    if (catNorm === 'all') {
+      // restore everything when selecting All
+      restoreStoredSections();
+    } else {
+      // if user switched category since last run, restore previous sections first
+      if (window.__lastSelectedCategory && (window.__lastSelectedCategory || '').toString().toLowerCase() !== catNorm) {
+        try { console.debug('[filterCards] lastSelected=', window.__lastSelectedCategory); } catch(e) {}
+        restoreStoredSections();
+      }
+
+      // if we haven't already detached sections for this filter, do it now
+      if (!window.__storedSections || window.__storedSections.length === 0) {
+        var nav = document.querySelector('nav');
+        var parent = nav ? nav.parentNode : document.body;
+
+        // collect poster-row sections and their headings
+        var rows = Array.from(document.querySelectorAll('.poster-row'));
+        var sections = [];
+        rows.forEach(function(row){
+          var p = row.previousElementSibling;
+          var heading = null;
+          while (p) {
+            try { if (p.matches && p.matches('div.d-flex.align-items-center.px-4.pt-4.pb-2')) { heading = p; break; } } catch(e) {}
+            p = p.previousElementSibling;
+          }
+
+          // determine if this row should be kept for the selectedCategory
+          // NOTE: always treat the `#allPosters` row as non-matching so it is removed
+          var isMatch = false;
+          if (row.id === 'allPosters') {
+            isMatch = false;
+          } else if (catNorm && catNorm.startsWith('genre:')) {
+            var genreKey = catNorm.split(':')[1];
+            if (row.id === ('genre-' + genreKey + '-posters')) isMatch = true;
+          } else if (catNorm === 'watchlater') {
+            if (row.id === 'watchLaterPosters' || (row.parentElement && row.parentElement.id === 'watchLaterRow')) isMatch = true;
+          } else {
+            if (row.querySelector('.card[data-category="' + catNorm + '"]')) isMatch = true;
+          }
+
+          sections.push({ heading: heading, row: row, isMatch: isMatch });
+        });
+
+        // find the first matching section
+        var matched = sections.find(function(s){ return s.isMatch; });
+        try { console.debug('[filterCards] sections found=', sections.length, 'matched=', !!matched); } catch(e) {}
+
+        // if there's no matched section, skip detaching (prevents removing all sections)
+        if (!matched) {
+          window.__storedSections = [];
+        } else {
+          // detach non-matching sections and store them for restoration using comment placeholders
+          window.__storedSections = [];
+          sections.forEach(function(s){
+            if (!s.isMatch) {
+              if (s.heading && s.heading.parentNode) {
+                try {
+                  var ph = document.createComment('ph:' + (s.heading.id || s.heading.className || 'heading'));
+                  s.heading.parentNode.insertBefore(ph, s.heading);
+                } catch(e) { var ph = null; }
+                window.__storedSections.push({ node: s.heading, parent: s.heading.parentNode, placeholder: ph });
+                try { s.heading.parentNode.removeChild(s.heading); } catch(e) {}
+              }
+              if (s.row && s.row.parentNode) {
+                try {
+                  var ph2 = document.createComment('ph:' + (s.row.id || s.row.className || 'row'));
+                  s.row.parentNode.insertBefore(ph2, s.row);
+                } catch(e) { var ph2 = null; }
+                window.__storedSections.push({ node: s.row, parent: s.row.parentNode, placeholder: ph2 });
+                try { s.row.parentNode.removeChild(s.row); } catch(e) {}
+              }
+            }
+          });
+        }
+
+        // move the matched section to just after nav so it's the first visible row
+        if (matched) {
+          try {
+            if (matched.heading) parent.insertBefore(matched.heading, nav.nextSibling);
+            if (matched.row) parent.insertBefore(matched.row, matched.heading ? matched.heading.nextSibling : nav.nextSibling);
+          } catch(e) { /* ignore */ }
+          try { console.debug('[filterCards] moved matched section id=', matched.row && matched.row.id); } catch(e) {}
+        }
+
+        // small delay then update swipers to recalculate sizes/transforms
+        setTimeout(function(){ try { if (window.__swipers) window.__swipers.forEach(s => s.update && s.update()); } catch(e){} }, 60);
+        try { console.debug('[filterCards] storedSections count=', window.__storedSections && window.__storedSections.length); } catch(e) {}
+      }
+
+      // remember current category as last applied (store original value)
+      window.__lastSelectedCategory = selectedCategory;
+    }
+  } catch (e) { /* ignore section rearrange errors */ }
 
   // helper to hide all then selectively show
   function showCard(c) { c.style.display = ''; }
   function hideCard(c) { c.style.display = 'none'; }
 
   // default: show/hide based on category or special values
-  if (selectedCategory && selectedCategory.startsWith('genre:')) {
+  if (catNorm && catNorm.startsWith('genre:')) {
     // show only cards that appear in the corresponding genre container
-    const genreKey = selectedCategory.split(':')[1];
+    const genreKey = catNorm.split(':')[1];
     const container = document.getElementById('genre-' + genreKey + '-posters');
     const titles = new Set();
     if (container) {
@@ -3044,7 +3222,7 @@ function filterCards() {
     return;
   }
 
-  if (selectedCategory === 'watchlater') {
+  if (catNorm === 'watchlater') {
     // show only cards that live inside #watchLaterPosters
     const wl = document.getElementById('watchLaterPosters');
     const titles = new Set();
@@ -3062,21 +3240,98 @@ function filterCards() {
   // fallback: regular category filter (movie / tvshow / anime / All)
   allCards.forEach(card => {
     const title = (card.querySelector('.card-title') && card.querySelector('.card-title').textContent || '').toLowerCase();
-    const category = card.getAttribute('data-category'); // make sure each card has data-category
-    const matchesCategory = selectedCategory === "All" || category === selectedCategory;
+    const category = (card.getAttribute('data-category') || '').toString().toLowerCase(); // make sure each card has data-category
+    const matchesCategory = (catNorm === "all") || category === catNorm;
     const matchesQuery = title.includes(query);
     if (matchesCategory && matchesQuery) showCard(card); else hideCard(card);
   });
+
+  // After showing/hiding cards, hide whole sections (heading + poster-row)
+  // when they contain no visible cards so category headings don't remain empty.
+  try {
+    var posterRows = Array.from(document.querySelectorAll('.poster-row'));
+    posterRows.forEach(function (row) {
+      // count visible cards inside this row
+      var cards = Array.from(row.querySelectorAll('.card'));
+      var visible = cards.filter(function (c) {
+        try { return window.getComputedStyle(c).display !== 'none'; } catch(e) { return c.style.display !== 'none'; }
+      }).length;
+
+      // find the heading element just before this row (common pattern in markup)
+      // specifically target the container with class `d-flex align-items-center px-4 pt-4 pb-2`
+      var heading = null;
+      try {
+        var p = row.previousElementSibling;
+        while (p) {
+          if (p.matches && p.matches('div.d-flex.align-items-center.px-4.pt-4.pb-2')) { heading = p; break; }
+          p = p.previousElementSibling;
+        }
+      } catch (e) { heading = row.previousElementSibling; }
+
+      if (visible === 0) {
+        row.style.display = 'none';
+        if (heading) heading.style.display = 'none';
+      } else {
+        row.style.display = '';
+        if (heading) heading.style.display = '';
+      }
+    });
+  } catch (e) { /* ignore visibility failures */ }
 }
 
 // Trigger search on button click
+// NOTE: searching will no longer hide other posters. If the search text
+// exactly matches a title (case-insensitive), the overlay will open.
 searchButton.addEventListener('click', function(e) {
   e.preventDefault();
-  filterCards();
-});
+  var queryRaw = (searchInput.value || '').trim();
+  if (!queryRaw) return;
 
-// Optional: search while typing
-searchInput.addEventListener('keyup', filterCards);
+  // try exact title match (case-insensitive) across all cards
+  var q = queryRaw.toLowerCase();
+  var allCards = Array.from(document.querySelectorAll('.card'));
+  var matched = null;
+  for (var i = 0; i < allCards.length; i++) {
+    var c = allCards[i];
+    var title = (c.getAttribute('data-title') || (c.querySelector('.card-title') && c.querySelector('.card-title').textContent) || '').trim();
+    if (title.toLowerCase() === q) { matched = c; break; }
+  }
+
+  if (matched) {
+    var img = matched.querySelector('.card-img-top, img');
+    if (img) {
+      // If the matched card is inside a Swiper, move that Swiper to the card's slide
+      try {
+        var slide = matched.closest('.swiper-slide');
+        if (slide) {
+          var wrapper = slide.closest('.swiper');
+          var s = wrapper && wrapper._swiper ? wrapper._swiper : null;
+          if (s && s.slides && s.slides.length) {
+            // find slide index in swiper.slides collection
+            var slidesArr = Array.prototype.slice.call(s.slides || []);
+            var idx = slidesArr.indexOf(slide);
+            if (idx >= 0) {
+              // ensure sizes calculated
+              try { s.update(); } catch(e){}
+              // slide to the matched slide (use loop-friendly API if available)
+              try {
+                if (typeof s.slideToLoop === 'function') s.slideToLoop(idx, 400);
+                else s.slideTo(idx, 400);
+              } catch (e) { try { s.slideTo(idx); } catch(e){} }
+              // wait for animation then open overlay
+              setTimeout(function() { try { img.click(); } catch(e){} }, 450);
+              return;
+            }
+          }
+        }
+      } catch (e) { /* fallback */ }
+
+      // fallback: scroll into view then click
+      try { img.scrollIntoView({behavior: 'smooth', block: 'center'}); } catch(e) {}
+      setTimeout(function() { try { img.click(); } catch(e){} }, 300);
+    }
+  }
+});
 
 </script>
 
@@ -3089,6 +3344,45 @@ searchInput.addEventListener('keyup', filterCards);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 
 <!-- Swiper JS -->
+<!-- Populate the All row by cloning every card with data-category "movie", "tvshow", or "anime" -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      var allContainer = document.getElementById('allPosters');
+      if (!allContainer) return;
+
+      // collect original cards (do not include watch later clones)
+      var selector = '.card[data-category]';
+      var originals = Array.from(document.querySelectorAll(selector)).filter(function (c) {
+        var cat = (c.getAttribute('data-category') || '').toLowerCase();
+        return cat === 'movie' || cat === 'tvshow' || cat === 'anime';
+      });
+
+      originals.forEach(function (card) {
+        try {
+          var clone = card.cloneNode(true);
+          // remove inline onclick handlers from cloned save buttons (cleanup script will also sanitize)
+          var sb = clone.querySelector('.save-btn');
+          if (sb && sb.getAttribute && sb.getAttribute('onclick')) sb.removeAttribute('onclick');
+
+          // make cloned image trigger the original card's click behavior
+          var originalImg = card.querySelector('.card-img-top, img');
+          var cloneImg = clone.querySelector('.card-img-top, img');
+          if (cloneImg && originalImg) {
+            cloneImg.style.cursor = 'pointer';
+            cloneImg.addEventListener('click', function (e) {
+              e.stopPropagation();
+              // trigger original image click to open overlay
+              originalImg.click();
+            });
+          }
+
+          allContainer.appendChild(clone);
+        } catch (e) { /* ignore single clone errors */ }
+      });
+    } catch (e) { console.warn('populate all failed', e); }
+  });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
   // Convert every .poster-row into a Swiper instance on load
@@ -3139,36 +3433,69 @@ searchInput.addEventListener('keyup', filterCards);
         posterRow.style.overflow = 'visible';
         posterRow.appendChild(wrapper);
 
-        // initialize Swiper on the wrapper element with coverflow + looping for cylinder effect
-        var swiper = new Swiper(wrapper, {
-          effect: 'coverflow',
-          loop: true,
-          slidesPerView: 5,
-          slidesPerGroup: 1,
-          spaceBetween: 24,
-          centeredSlides: true,
-          slideToClickedSlide: true,
-          watchOverflow: true,
-          grabCursor: true,
-          coverflowEffect: {
-            rotate: 18,      // tilt angle of side slides
-            stretch: -20,    // bring slides a bit closer for overlapping look
-            depth: 160,      // 3D depth
-            modifier: 1.1,
-            slideShadows: false,
-          },
-          // pagination + navigation
-          pagination: { el: pagination, clickable: true },
-          navigation: { nextEl: nextBtn, prevEl: prevBtn },
-          keyboard: { enabled: true },
-          breakpoints: {
-            320: { slidesPerView: 1, spaceBetween: 10, centeredSlides: true },
-            600: { slidesPerView: 2, spaceBetween: 16, centeredSlides: true },
-            900: { slidesPerView: 3, spaceBetween: 18, centeredSlides: true },
-            1100: { slidesPerView: 4, spaceBetween: 20, centeredSlides: true },
-            1400: { slidesPerView: 5, spaceBetween: 24, centeredSlides: true }
-          }
-        });
+        // initialize Swiper on the wrapper element
+        // Use coverflow for the All row, keep simple pagination for other rows
+        var swiperOptions;
+        if (posterRow.id === 'allPosters') {
+          swiperOptions = {
+            effect: 'coverflow',
+            loop: true,
+            slidesPerView: 5,
+            slidesPerGroup: 1,
+            spaceBetween: 24,
+            centeredSlides: true,
+            slideToClickedSlide: true,
+            watchOverflow: true,
+            grabCursor: true,
+            coverflowEffect: {
+              rotate: 18,
+              stretch: -20,
+              depth: 160,
+              modifier: 1.1,
+              slideShadows: false
+            },
+            pagination: { el: pagination, clickable: true },
+            navigation: { nextEl: nextBtn, prevEl: prevBtn },
+            keyboard: { enabled: true },
+            breakpoints: {
+              320: { slidesPerView: 1, spaceBetween: 10, centeredSlides: true },
+              600: { slidesPerView: 2, spaceBetween: 16, centeredSlides: true },
+              900: { slidesPerView: 3, spaceBetween: 18, centeredSlides: true },
+              1100: { slidesPerView: 4, spaceBetween: 20, centeredSlides: true },
+              1400: { slidesPerView: 5, spaceBetween: 24, centeredSlides: true }
+            }
+          };
+        } else {
+          swiperOptions = {
+            loop: false,
+            slidesPerView: 5,
+            slidesPerGroup: 1,
+            spaceBetween: 24,
+            centeredSlides: false,
+            slideToClickedSlide: true,
+            watchOverflow: true,
+            grabCursor: true,
+            pagination: { el: pagination, clickable: true, dynamicBullets: true },
+            navigation: { nextEl: nextBtn, prevEl: prevBtn },
+            keyboard: { enabled: true },
+            breakpoints: {
+              320: { slidesPerView: 1, spaceBetween: 10, centeredSlides: false },
+              600: { slidesPerView: 2, spaceBetween: 16, centeredSlides: false },
+              900: { slidesPerView: 3, spaceBetween: 18, centeredSlides: false },
+              1100: { slidesPerView: 4, spaceBetween: 20, centeredSlides: false },
+              1400: { slidesPerView: 5, spaceBetween: 24, centeredSlides: false }
+            }
+          };
+        }
+
+        var swiper = new Swiper(wrapper, swiperOptions);
+        // keep a reference so other code (like the overlay close) can refresh Swipers
+        try {
+          if (!window.__swipers) window.__swipers = [];
+          window.__swipers.push(swiper);
+          // also attach to the wrapper for easy lookup
+          wrapper._swiper = swiper;
+        } catch (e) { /* ignore */ }
 
         // MutationObserver: when new .card elements are appended to the original posterRow,
         // move them into the swiper as slides so dynamic additions (Watch Later, genres)
@@ -3421,5 +3748,13 @@ searchInput.addEventListener('keyup', filterCards);
 </script>
 
 <!-- i18n -->
-<script src="js/translations.js"></script>
-<script src="js/i18n.js"></script>
+<script src="js (translation)/translations.js"></script>
+<script src="js (translation)/i18n.js"></script>
+<script>
+  // alias translations for older inline code and re-run translation pass after translations load
+  window.I18N = window.TRANSLATIONS || {};
+  try {
+    if (typeof setLangBtnLabel === 'function') setLangBtnLabel(window.__currentLang ? window.__currentLang() : (localStorage.getItem('siteLang') || 'en'));
+  } catch(e) { /* ignore */ }
+  try { if (typeof applyTranslations === 'function') applyTranslations(); } catch(e) { /* ignore */ }
+</script>
